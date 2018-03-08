@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">MyKotlinApp</string>
+    <string name="button_example">Pulsa aquí</string>
+</resources>
