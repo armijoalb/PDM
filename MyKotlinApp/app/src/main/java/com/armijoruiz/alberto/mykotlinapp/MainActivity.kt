@@ -13,15 +13,22 @@ import android.widget.ImageButton
 import android.Manifest
 import android.content.ContentResolver
 import android.content.pm.PackageManager
+import android.os.Build
 import android.provider.MediaStore
 import android.support.v4.app.ActivityCompat
 
 class MainActivity : AppCompatActivity() {
 
+    var recyclerView:RecyclerView?= null
+    val mLayoutManager = LinearLayoutManager(this)
+    var mAdapter:MyAdapter?=null
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        // Pedimos permiso al usuario para acceder a la espacio del dispositivo.
         setupPermissions()
 
         val fab = findViewById<FloatingActionButton>(R.id.boton_flotante)
@@ -33,8 +40,12 @@ class MainActivity : AppCompatActivity() {
 
     private fun setupPermissions(){
         val permission = ContextCompat.checkSelfPermission(this,Manifest.permission.READ_EXTERNAL_STORAGE)
-        if(permission != PackageManager.PERMISSION_GRANTED){
-            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE),1)
+        if(Build.VERSION.SDK_INT >= 23){
+            if(permission != PackageManager.PERMISSION_GRANTED){
+                ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE),1)
+            }else{
+                displayMusic()
+            }
         }else{
             displayMusic()
         }
@@ -57,25 +68,20 @@ class MainActivity : AppCompatActivity() {
 
         val music_info = getMusic()
 
-        val recyclerView = findViewById<RecyclerView>(R.id.mRecyclerView)
-        recyclerView.setHasFixedSize(true)
+        recyclerView = findViewById<RecyclerView>(R.id.mRecyclerView)
+        recyclerView?.setHasFixedSize(true)
 
-        val mLayoutManager = LinearLayoutManager(this)
-        recyclerView.layoutManager = mLayoutManager
 
-        val titles = ArrayList<String>()
-        val authors = ArrayList<String>()
-        for((title,author) in music_info){
-            titles.add(title)
-            authors.add(author)
-        }
-        val mAdapter = MyAdapter(this,titles.toList(),authors.toList())
-        recyclerView.adapter = mAdapter
+        recyclerView?.layoutManager = mLayoutManager
+
+
+        mAdapter = MyAdapter(this,music_info)
+        recyclerView?.adapter = mAdapter
 
     }
 
-    private fun getMusic():ArrayList<Pair<String,String> >{
-        val canciones = ArrayList<Pair<String,String>>()
+    private fun getMusic():ArrayList<song>{
+        val canciones = ArrayList<song>()
 
         val contentResolver = contentResolver
         val songUri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI
@@ -84,15 +90,18 @@ class MainActivity : AppCompatActivity() {
         if(songCursor != null && songCursor.moveToFirst()){
             val songTitle_id = songCursor.getColumnIndex(MediaStore.Audio.Media.TITLE)
             val songArtist_id = songCursor.getColumnIndex(MediaStore.Audio.Media.ARTIST)
+            val songPath_id = songCursor.getColumnIndex(MediaStore.Audio.Media.DATA)
             var songTitle : String
             var songArtist : String
+            var songPath : String
 
 
             do {
                 songTitle = songCursor.getString(songTitle_id)
                 songArtist = songCursor.getString(songArtist_id)
+                songPath = songCursor.getString(songPath_id)
 
-                canciones.add(Pair(songTitle,songArtist))
+                canciones.add(song(songArtist,songTitle,songPath))
 
             }while(songCursor.moveToNext())
         }
