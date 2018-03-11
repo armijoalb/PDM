@@ -4,6 +4,7 @@ import android.app.Service
 import android.content.Intent
 import android.media.MediaPlayer
 import android.os.IBinder
+import android.util.Log
 
 /**
  * Created by Alberto on 09/03/2018.
@@ -31,6 +32,7 @@ class playMusicService : Service() {
 
         // Comprobamos si ya está reproducciendo música.
         if( mMediaPlayer != null ){
+            Log.i("killing shit:", "killing media player")
             mMediaPlayer?.stop()
             mMediaPlayer?.release()
             mMediaPlayer = null
@@ -39,9 +41,16 @@ class playMusicService : Service() {
         // Creamos el objeto y preparamos la canción que vamos a reproducir.
         mMediaPlayer = MediaPlayer()
         mMediaPlayer?.setDataSource(musicDataList[currentPos])
+        Log.i("data source:", musicDataList[currentPos])
+        mMediaPlayer?.prepareAsync()
         mMediaPlayer?.setOnPreparedListener {
             mMediaPlayer?.start()
+            Log.i("player:","playing music")
         }
+
+
+
+
 
         return super.onStartCommand(intent, flags, startId)
     }
