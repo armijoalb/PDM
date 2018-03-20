@@ -27,8 +27,6 @@ class MyAdapter(context : Context,songs: ArrayList<song>) : RecyclerView.Adapter
 
     class ViewHolder(itemView:View) :RecyclerView.ViewHolder(itemView){
         var mView = itemView
-        var playbutton = itemView.playButton
-
     }
 
     override fun getItemCount(): Int {
@@ -47,19 +45,18 @@ class MyAdapter(context : Context,songs: ArrayList<song>) : RecyclerView.Adapter
         holder?.itemView?.nombreMusica?.text = canciones[position].name
         holder?.itemView?.autor?.text = canciones[position].author
 
-        holder?.itemView?.playButton?.setOnClickListener{
-            for(i in 0 until canciones.size)
+        // Creamos un onClickListener para el cardView.
+        holder?.itemView?.setOnClickListener {
+            for (i in 0 until canciones.size)
                 musicList.add(canciones[i].path)
 
-            Toast.makeText(mContext,"reproducciendo",Toast.LENGTH_SHORT).show()
-            Log.i("musiclist",musicList.toString())
-            var musicIntent = Intent(mContext,playMusicService::class.java)
-            musicIntent.putStringArrayListExtra(MUSICLIST,musicList)
-            musicIntent.putExtra(MUSICITEMPOS,position)
+            Toast.makeText(mContext, "reproducciendo", Toast.LENGTH_SHORT).show()
+            Log.i("musiclist", musicList.toString())
+            var musicIntent = Intent(mContext, playMusicService::class.java)
+            musicIntent.putStringArrayListExtra(MUSICLIST, musicList)
+            musicIntent.putExtra(MUSICITEMPOS, position)
             mContext.startService(musicIntent)
         }
-
-
 
     }
 }

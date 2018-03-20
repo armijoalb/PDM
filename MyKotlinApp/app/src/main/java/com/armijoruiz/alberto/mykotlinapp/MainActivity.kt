@@ -32,7 +32,7 @@ class MainActivity : AppCompatActivity() {
         setupPermissions()
 
         val fab = findViewById<FloatingActionButton>(R.id.boton_flotante)
-        fab.setOnClickListener {
+        fab.setOnClickListener{
             myAsyncTask(this).execute()
         }
 
@@ -71,9 +71,7 @@ class MainActivity : AppCompatActivity() {
         recyclerView = findViewById<RecyclerView>(R.id.mRecyclerView)
         recyclerView?.setHasFixedSize(true)
 
-
         recyclerView?.layoutManager = mLayoutManager
-
 
         mAdapter = MyAdapter(this,music_info)
         recyclerView?.adapter = mAdapter
