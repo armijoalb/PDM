@@ -19,17 +19,36 @@ class playMusicService : Service() {
     var mMediaPlayer:MediaPlayer? = null
     var seekPosition : Int =  0
 
+    val PLAYSONG:String = "com.armijoruiz.alberto.mykotlinapp.action.PLAYSONG"
+    val PLAYPAUSE:String = "com.armijoruiz.alberto.mykotlinapp.action.PLAYPAUSE"
+    val NEXT:String = "com.armijoruiz.alberto.mykotlinapp.action.NEXT"
+    val PREV:String = "com.armijoruiz.alberto.mykotlinapp.action.PREV"
+
     override fun onBind(p0: Intent?): IBinder ?{
         return null
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        // cogemos los datos que le hemos pasado al intent.
-        currentPos = intent!!.getIntExtra(MyAdapter.MUSICITEMPOS,0)
-        musicDataList = intent.getStringArrayListExtra(MyAdapter.MUSICLIST)
+        musicDataList = intent!!.getStringArrayListExtra(MyAdapter.MUSICLIST)
 
+        when(intent.action){
+            PLAYSONG -> {
+                // cogemos los datos que le hemos pasado al intent.
+                currentPos = intent!!.getIntExtra(MyAdapter.MUSICITEMPOS,0)
+                playMusic(currentPos)
+            }
+            PLAYPAUSE -> {
+                Log.i("onStartCommand: ", "playPause")
+                if(mMediaPlayer!!.isPlaying){
+                    Log.i("play_pause: ", "pausando")
+                    pauseMusic()
+                }else{
+                    Log.i("play_pause: ", "resume")
+                    resumeMusic()
+                }
+            }
+        }
 
-        playMusic(currentPos)
 
 
         return super.onStartCommand(intent, flags, startId)
@@ -77,6 +96,16 @@ class playMusicService : Service() {
             mMediaPlayer!!.seekTo(seekPosition)
             mMediaPlayer!!.prepare()
         }
+    }
+
+    private fun playNext(){
+        var nextSong = NextPosition(currentPos,1)
+        playMusic(nextSong)
+    }
+
+    private fun playPrev(){
+        var nextSong = NextPosition(currentPos,-1)
+        playMusic(nextSong)
     }
 
     private fun playMusic(pos:Int){

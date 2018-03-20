@@ -15,10 +15,16 @@ import kotlinx.android.synthetic.main.layout_holder.view.*
 /**
  * Created by Alberto on 06/03/2018.
  */
+
 class MyAdapter(context : Context,songs: ArrayList<song>) : RecyclerView.Adapter<MyAdapter.ViewHolder>(){
     val mContext = context
     val canciones = songs
     var musicList:ArrayList<String> = ArrayList()
+
+    val PLAYSONG:String = "com.armijoruiz.alberto.mykotlinapp.action.PLAYSONG"
+    val PLAYPAUSE:String = "com.armijoruiz.alberto.mykotlinapp.action.PLAYPAUSE"
+    val NEXT:String = "com.armijoruiz.alberto.mykotlinapp.action.NEXT"
+    val PREV:String = "com.armijoruiz.alberto.mykotlinapp.action.PREV"
 
     companion object {
         val MUSICLIST = "MusicList"
@@ -33,11 +39,21 @@ class MyAdapter(context : Context,songs: ArrayList<song>) : RecyclerView.Adapter
         return canciones.size
     }
 
+
     override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): ViewHolder {
         // Hay que crear un ViewHolder.
         val layout_inflater = LayoutInflater.from(parent?.context)
         val cellForRow = layout_inflater.inflate(R.layout.layout_holder,parent,false)
         return ViewHolder(cellForRow)
+    }
+
+    // Función para pausar o reanudar una canción.
+    fun playPauseClick(){
+        Log.i("play_pause: ", "playPause llamado")
+        var musicIntent = Intent(mContext,playMusicService::class.java)
+        musicIntent.setAction(PLAYPAUSE)
+        musicIntent.putStringArrayListExtra(MUSICLIST, musicList)
+        mContext.startService(musicIntent)
     }
 
     // Función que asocia un nuevo viewHolder a un elemento de los vectores.
@@ -53,6 +69,7 @@ class MyAdapter(context : Context,songs: ArrayList<song>) : RecyclerView.Adapter
             Toast.makeText(mContext, "reproducciendo", Toast.LENGTH_SHORT).show()
             Log.i("musiclist", musicList.toString())
             var musicIntent = Intent(mContext, playMusicService::class.java)
+            musicIntent.setAction(PLAYSONG)
             musicIntent.putStringArrayListExtra(MUSICLIST, musicList)
             musicIntent.putExtra(MUSICITEMPOS, position)
             mContext.startService(musicIntent)

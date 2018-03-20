@@ -9,13 +9,12 @@ import android.content.Context
 import android.support.v4.content.ContextCompat
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
-import android.widget.ImageButton
 import android.Manifest
-import android.content.ContentResolver
 import android.content.pm.PackageManager
 import android.os.Build
 import android.provider.MediaStore
 import android.support.v4.app.ActivityCompat
+import android.util.Log
 
 class MainActivity : AppCompatActivity() {
 
@@ -33,9 +32,8 @@ class MainActivity : AppCompatActivity() {
 
         val fab = findViewById<FloatingActionButton>(R.id.boton_flotante)
         fab.setOnClickListener{
-            myAsyncTask(this).execute()
+            mAdapter!!.playPauseClick()
         }
-
     }
 
     private fun setupPermissions(){
@@ -76,6 +74,7 @@ class MainActivity : AppCompatActivity() {
         mAdapter = MyAdapter(this,music_info)
         recyclerView?.adapter = mAdapter
 
+
     }
 
     private fun getMusic():ArrayList<song>{
@@ -105,29 +104,6 @@ class MainActivity : AppCompatActivity() {
         }
 
         return canciones
-    }
-
-    class myAsyncTask(context: Context) : AsyncTask<Void,Void,Int>(){
-
-        var mContext:Context = context
-
-        override fun onPreExecute() {
-            super.onPreExecute()
-        }
-
-        override fun onPostExecute(result: Int?) {
-            super.onPostExecute(result)
-            Toast.makeText(mContext,"el resultado de la tarea es $result",Toast.LENGTH_LONG).show()
-        }
-
-        override fun doInBackground(vararg p0: Void?): Int {
-            var resultado:Int = 0
-
-            for(i:Int in 1..10)
-                resultado = resultado+i
-
-            return resultado
-        }
     }
 
 

@@ -15,11 +15,17 @@
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <service android:name=".playMusicService"/>
+        <service android:name=".playMusicService">
+            <intent-filter>
+                <action android:name="com.armijoruiz.alberto.mykotlinapp.action.PLAYSONG" />
+                <action android:name="com.armijoruiz.alberto.mykotlinapp.action.PLAYPAUSE" />
+                <action android:name="com.armijoruiz.alberto.mykotlinapp.action.NEXT" />
+                <action android:name="com.armijoruiz.alberto.mykotlinapp.action.PREV" />
+            </intent-filter>
+        </service>
     </application>
 
 </manifest>
