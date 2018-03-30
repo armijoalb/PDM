@@ -18,7 +18,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <service android:name=".playMusicService">
+        <service android:name=".services.playMusicService">
             <intent-filter>
                 <action android:name="com.armijoruiz.alberto.mykotlinapp.action.PLAYSONG" />
                 <action android:name="com.armijoruiz.alberto.mykotlinapp.action.PLAYPAUSE" />

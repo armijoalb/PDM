@@ -1,4 +1,4 @@
-package com.armijoruiz.alberto.mykotlinapp
+package com.armijoruiz.alberto.mykotlinapp.adapters
 
 import android.content.Context
 import android.content.Intent
@@ -7,9 +7,10 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Adapter
-import android.widget.ImageButton
 import android.widget.Toast
+import com.armijoruiz.alberto.mykotlinapp.R
+import com.armijoruiz.alberto.mykotlinapp.services.playMusicService
+import com.armijoruiz.alberto.mykotlinapp.song
 import kotlinx.android.synthetic.main.layout_holder.view.*
 
 /**
@@ -50,11 +51,30 @@ class MyAdapter(context : Context,songs: ArrayList<song>) : RecyclerView.Adapter
     // Función para pausar o reanudar una canción.
     fun playPauseClick(){
         Log.i("play_pause: ", "playPause llamado")
-        var musicIntent = Intent(mContext,playMusicService::class.java)
+        var musicIntent = Intent(mContext, playMusicService::class.java)
         musicIntent.setAction(PLAYPAUSE)
         musicIntent.putStringArrayListExtra(MUSICLIST, musicList)
         mContext.startService(musicIntent)
     }
+
+    // Función para pasar a la siguiente canción.
+    fun playNextSong(){
+        Log.i("play_next: ", "playNextSong llamado")
+        var musicIntent = Intent(mContext, playMusicService::class.java)
+        musicIntent.setAction(NEXT)
+        musicIntent.putStringArrayListExtra(MUSICLIST, musicList)
+        mContext.startService(musicIntent)
+    }
+
+    // Función para pasar a la siguiente canción.
+    fun playPrevSong(){
+        Log.i("play_prev: ", "playPrevSong llamado")
+        var musicIntent = Intent(mContext, playMusicService::class.java)
+        musicIntent.setAction(PREV)
+        musicIntent.putStringArrayListExtra(MUSICLIST, musicList)
+        mContext.startService(musicIntent)
+    }
+
 
     // Función que asocia un nuevo viewHolder a un elemento de los vectores.
     override fun onBindViewHolder(holder: ViewHolder?, position: Int) {

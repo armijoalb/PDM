@@ -1,11 +1,7 @@
 package com.armijoruiz.alberto.mykotlinapp
 
-import android.os.AsyncTask
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import android.support.design.widget.FloatingActionButton
-import android.widget.Toast
-import android.content.Context
 import android.support.v4.content.ContextCompat
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
@@ -14,13 +10,17 @@ import android.content.pm.PackageManager
 import android.os.Build
 import android.provider.MediaStore
 import android.support.v4.app.ActivityCompat
-import android.util.Log
+import android.support.v4.app.FragmentTransaction
+import com.armijoruiz.alberto.mykotlinapp.adapters.MyAdapter
+import com.armijoruiz.alberto.mykotlinapp.fragments.MusicFragment
+import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
 
     var recyclerView:RecyclerView?= null
     val mLayoutManager = LinearLayoutManager(this)
-    var mAdapter:MyAdapter?=null
+    var mAdapter: MyAdapter?=null
+
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -29,12 +29,18 @@ class MainActivity : AppCompatActivity() {
 
         // Pedimos permiso al usuario para acceder a la espacio del dispositivo.
         setupPermissions()
+        initFragment()
 
-        val fab = findViewById<FloatingActionButton>(R.id.boton_flotante)
-        fab.setOnClickListener{
-            mAdapter!!.playPauseClick()
-        }
     }
+
+    private fun initFragment(){
+        val musicFragment:MusicFragment = MusicFragment()
+        val transaction : FragmentTransaction = supportFragmentManager.beginTransaction()
+        transaction.replace(R.id.music_layout, musicFragment)
+        transaction.commit()
+    }
+
+
 
     private fun setupPermissions(){
         val permission = ContextCompat.checkSelfPermission(this,Manifest.permission.READ_EXTERNAL_STORAGE)
@@ -71,7 +77,7 @@ class MainActivity : AppCompatActivity() {
 
         recyclerView?.layoutManager = mLayoutManager
 
-        mAdapter = MyAdapter(this,music_info)
+        mAdapter = MyAdapter(this, music_info)
         recyclerView?.adapter = mAdapter
 
 

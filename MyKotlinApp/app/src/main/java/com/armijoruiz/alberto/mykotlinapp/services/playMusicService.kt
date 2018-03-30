@@ -1,11 +1,14 @@
-package com.armijoruiz.alberto.mykotlinapp
+package com.armijoruiz.alberto.mykotlinapp.services
 
 import android.app.Service
+import android.content.Context
 import android.content.Intent
+import android.media.AudioManager
 import android.media.MediaPlayer
+import android.os.Build
 import android.os.IBinder
-import android.provider.MediaStore
 import android.util.Log
+import com.armijoruiz.alberto.mykotlinapp.adapters.MyAdapter
 
 /**
  * Clase que crea un Servicio para reproducir música.
@@ -18,6 +21,7 @@ class playMusicService : Service() {
     var musicDataList:ArrayList<String> = ArrayList()
     var mMediaPlayer:MediaPlayer? = null
     var seekPosition : Int =  0
+    var mAudioManager: AudioManager? = null
 
     val PLAYSONG:String = "com.armijoruiz.alberto.mykotlinapp.action.PLAYSONG"
     val PLAYPAUSE:String = "com.armijoruiz.alberto.mykotlinapp.action.PLAYPAUSE"
@@ -28,13 +32,31 @@ class playMusicService : Service() {
         return null
     }
 
+    override fun onCreate() {
+        super.onCreate()
+
+        // Creamos una instancia del audioManager.
+        mAudioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
+
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+
+        mMediaPlayer?.stop()
+        mMediaPlayer?.release()
+        mMediaPlayer = null
+
+        mAudioManager = null
+    }
+
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         musicDataList = intent!!.getStringArrayListExtra(MyAdapter.MUSICLIST)
 
         when(intent.action){
             PLAYSONG -> {
                 // cogemos los datos que le hemos pasado al intent.
-                currentPos = intent!!.getIntExtra(MyAdapter.MUSICITEMPOS,0)
+                currentPos = intent.getIntExtra(MyAdapter.MUSICITEMPOS,0)
                 playMusic(currentPos)
             }
             PLAYPAUSE -> {
@@ -47,8 +69,15 @@ class playMusicService : Service() {
                     resumeMusic()
                 }
             }
+            NEXT -> {
+                // Llamamos a PlayNext.
+                playNext()
+            }
+            PREV -> {
+                // Llamamos a PlayPrev.
+                playPrev()
+            }
         }
-
 
 
         return super.onStartCommand(intent, flags, startId)
@@ -78,6 +107,7 @@ class playMusicService : Service() {
 
     }
 
+
     private fun NextPosition(currentPosition : Int,nextPosition:Int) : Int {
         var newPosition = (currentPosition+nextPosition+musicDataList.size)%musicDataList.size
 
@@ -93,8 +123,9 @@ class playMusicService : Service() {
 
     private fun resumeMusic(){
         if(!mMediaPlayer!!.isPlaying){
+            Log.i("hi", "hello")
             mMediaPlayer!!.seekTo(seekPosition)
-            mMediaPlayer!!.prepare()
+            mMediaPlayer!!.start()
         }
     }
 
