@@ -7,9 +7,10 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import com.armijoruiz.alberto.mykotlinapp.R
-import com.armijoruiz.alberto.mykotlinapp.services.playMusicService
+import com.armijoruiz.alberto.mykotlinapp.interfaces.CustomOnItemClickListener
+import com.armijoruiz.alberto.mykotlinapp.other.*
+import com.armijoruiz.alberto.mykotlinapp.services.PlayMusicService
 import com.armijoruiz.alberto.mykotlinapp.song
 import kotlinx.android.synthetic.main.layout_holder.view.*
 
@@ -17,19 +18,17 @@ import kotlinx.android.synthetic.main.layout_holder.view.*
  * Created by Alberto on 06/03/2018.
  */
 
-class MyAdapter(context : Context,songs: ArrayList<song>) : RecyclerView.Adapter<MyAdapter.ViewHolder>(){
+class MyAdapter(context : Context,songs: ArrayList<song>, val itemlistener : CustomOnItemClickListener) : RecyclerView.Adapter<MyAdapter.ViewHolder>(){
     val mContext = context
     val canciones = songs
 
-    val PLAYSONG:String = "com.armijoruiz.alberto.mykotlinapp.action.PLAYSONG"
-    val PLAYPAUSE:String = "com.armijoruiz.alberto.mykotlinapp.action.PLAYPAUSE"
-    val NEXT:String = "com.armijoruiz.alberto.mykotlinapp.action.NEXT"
-    val PREV:String = "com.armijoruiz.alberto.mykotlinapp.action.PREV"
+    var listener : CustomOnItemClickListener? = null
 
     companion object {
-        val MUSICLIST = "MusicList"
         val MUSICITEMPOS = "MusicItemPos"
     }
+
+
 
     class ViewHolder(itemView:View) :RecyclerView.ViewHolder(itemView){
         var mView = itemView
@@ -50,7 +49,7 @@ class MyAdapter(context : Context,songs: ArrayList<song>) : RecyclerView.Adapter
     // Función para pausar o reanudar una canción.
     fun playPauseClick(){
         Log.i("play_pause: ", "playPause llamado")
-        var musicIntent = Intent(mContext, playMusicService::class.java)
+        var musicIntent = Intent(mContext, PlayMusicService::class.java)
         musicIntent.setAction(PLAYPAUSE)
         mContext.startService(musicIntent)
     }
@@ -58,7 +57,7 @@ class MyAdapter(context : Context,songs: ArrayList<song>) : RecyclerView.Adapter
     // Función para pasar a la siguiente canción.
     fun playNextSong(){
         Log.i("play_next: ", "playNextSong llamado")
-        var musicIntent = Intent(mContext, playMusicService::class.java)
+        var musicIntent = Intent(mContext, PlayMusicService::class.java)
         musicIntent.setAction(NEXT)
         mContext.startService(musicIntent)
     }
@@ -66,7 +65,7 @@ class MyAdapter(context : Context,songs: ArrayList<song>) : RecyclerView.Adapter
     // Función para pasar a la siguiente canción.
     fun playPrevSong(){
         Log.i("play_prev: ", "playPrevSong llamado")
-        var musicIntent = Intent(mContext, playMusicService::class.java)
+        var musicIntent = Intent(mContext, PlayMusicService::class.java)
         musicIntent.setAction(PREV)
 
         mContext.startService(musicIntent)
@@ -75,18 +74,17 @@ class MyAdapter(context : Context,songs: ArrayList<song>) : RecyclerView.Adapter
 
     // Función que asocia un nuevo viewHolder a un elemento de los vectores.
     override fun onBindViewHolder(holder: ViewHolder?, position: Int) {
+        listener = itemlistener
         holder?.itemView?.nombreMusica?.text = canciones[position].name
         holder?.itemView?.autor?.text = canciones[position].author
 
         // Creamos un onClickListener para el cardView.
-        holder?.itemView?.setOnClickListener {
-
-            Toast.makeText(mContext, "reproducciendo", Toast.LENGTH_SHORT).show()
-            var musicIntent = Intent(mContext, playMusicService::class.java)
-            musicIntent.setAction(PLAYSONG)
-            musicIntent.putExtra(MUSICITEMPOS, position)
-            mContext.startService(musicIntent)
-        }
+        holder?.itemView?.setOnClickListener(object : View.OnClickListener{
+            override fun onClick(v: View?) {
+                if(listener != null)
+                    listener?.onItemClick(position)
+            }
+        })
 
     }
 }

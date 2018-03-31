@@ -5,30 +5,32 @@ import android.content.Context
 import android.content.Intent
 import android.media.AudioManager
 import android.media.MediaPlayer
-import android.os.Build
 import android.os.IBinder
 import android.provider.MediaStore
 import android.util.Log
 import com.armijoruiz.alberto.mykotlinapp.adapters.MyAdapter
-import com.armijoruiz.alberto.mykotlinapp.song
+import com.armijoruiz.alberto.mykotlinapp.other.*
+
 
 /**
  * Clase que crea un Servicio para reproducir música.
  *
  * Un Servicio es un tipo de clase que ejecuta una tarea de larga duración.
  */
-class playMusicService : Service() {
+class PlayMusicService : Service() {
 
-    var currentPos:Int = 0
-    var musicDataList:ArrayList<String> = ArrayList()
-    var mMediaPlayer:MediaPlayer? = null
-    var seekPosition : Int =  0
-    var mAudioManager: AudioManager? = null
 
-    val PLAYSONG:String = "com.armijoruiz.alberto.mykotlinapp.action.PLAYSONG"
-    val PLAYPAUSE:String = "com.armijoruiz.alberto.mykotlinapp.action.PLAYPAUSE"
-    val NEXT:String = "com.armijoruiz.alberto.mykotlinapp.action.NEXT"
-    val PREV:String = "com.armijoruiz.alberto.mykotlinapp.action.PREV"
+    companion object {
+
+        private var currentPos:Int? = null
+        private var musicDataList:ArrayList<String> = ArrayList()
+        private var mMediaPlayer:MediaPlayer? = null
+        private var seekPosition : Int =  0
+        private var mAudioManager: AudioManager? = null
+
+        fun isMediaPlaying() = mMediaPlayer?.isPlaying
+        var serviceStarted : Boolean = false
+    }
 
     override fun onBind(p0: Intent?): IBinder ?{
         return null
@@ -39,6 +41,8 @@ class playMusicService : Service() {
 
         // Buscamos la música.
         getMusic()
+
+        serviceStarted = true
 
         // Creamos una instancia del audioManager.
         mAudioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
@@ -65,16 +69,21 @@ class playMusicService : Service() {
             PLAYSONG -> {
                 // cogemos los datos que le hemos pasado al intent.
                 currentPos = intent.getIntExtra(MyAdapter.MUSICITEMPOS,0)
-                playMusic(currentPos)
+                playMusic(currentPos!!)
             }
             PLAYPAUSE -> {
-                Log.i("onStartCommand: ", "playPause")
-                if(mMediaPlayer!!.isPlaying){
-                    Log.i("play_pause: ", "pausando")
-                    pauseMusic()
+                if(currentPos != null){
+                    Log.i("onStartCommand: ", "playPause")
+                    if(mMediaPlayer!!.isPlaying){
+                        Log.i("play_pause: ", "pausando")
+                        pauseMusic()
+                    }else{
+                        Log.i("play_pause: ", "resume")
+                        resumeMusic()
+                    }
                 }else{
-                    Log.i("play_pause: ", "resume")
-                    resumeMusic()
+                    currentPos = intent.getIntExtra(MyAdapter.MUSICITEMPOS,0)
+                    playMusic(currentPos!!)
                 }
             }
             NEXT -> {
@@ -99,14 +108,18 @@ class playMusicService : Service() {
 
         if(songCursor != null && songCursor.moveToFirst()){
             val songPath_id = songCursor.getColumnIndex(MediaStore.Audio.Media.DATA)
+            val dura_id = songCursor.getColumnIndex(MediaStore.Audio.Media.DURATION)
             var songPath : String
+            var duration : Int
 
 
             do {
 
                 songPath = songCursor.getString(songPath_id)
+                duration = songCursor.getInt(dura_id) / 1000
 
-                musicDataList.add(songPath)
+                if(duration > 30)
+                    musicDataList.add(songPath)
 
             }while(songCursor.moveToNext())
         }
@@ -120,7 +133,6 @@ class playMusicService : Service() {
             return
 
         mMediaPlayer = MediaPlayer()
-        mMediaPlayer?.isLooping = true
 
 
         mMediaPlayer?.setOnPreparedListener {
@@ -130,7 +142,7 @@ class playMusicService : Service() {
 
         mMediaPlayer?.setOnCompletionListener {
             mMediaPlayer?.reset()
-            var newpos = NextPosition(currentPos,1)
+            var newpos = NextPosition(currentPos!!,1)
             mMediaPlayer?.setDataSource(musicDataList[newpos])
             mMediaPlayer?.prepareAsync()
             Log.i("next song:", musicDataList[newpos])
@@ -141,6 +153,8 @@ class playMusicService : Service() {
 
     private fun NextPosition(currentPosition : Int,nextPosition:Int) : Int {
         var newPosition = (currentPosition+nextPosition+musicDataList.size)%musicDataList.size
+        Log.i("current_position", currentPosition.toString())
+        Log.i("next_position", newPosition.toString())
 
         return newPosition
     }
@@ -161,22 +175,24 @@ class playMusicService : Service() {
     }
 
     private fun playNext(){
-        var nextSong = NextPosition(currentPos,1)
+        var nextSong = NextPosition(currentPos!!,1)
         playMusic(nextSong)
     }
 
     private fun playPrev(){
-        var nextSong = NextPosition(currentPos,-1)
+        var nextSong = NextPosition(currentPos!!,-1)
         playMusic(nextSong)
     }
 
     private fun playMusic(pos:Int){
         Log.i("playMusic:", "attemping to play a song")
+        Log.i("playMusic:", musicDataList[pos])
         setupMediaPlayer()
         mMediaPlayer?.reset()
         mMediaPlayer!!.setDataSource(musicDataList[pos])
         Log.i("data source:", musicDataList[pos])
         mMediaPlayer!!.prepare()
+        currentPos = pos
 
     }
 }

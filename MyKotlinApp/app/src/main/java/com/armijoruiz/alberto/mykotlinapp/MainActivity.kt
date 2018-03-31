@@ -6,21 +6,39 @@ import android.support.v4.content.ContextCompat
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.Manifest
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.provider.MediaStore
 import android.support.v4.app.ActivityCompat
-import android.support.v4.app.FragmentTransaction
+import android.util.Log
+import android.view.View
+import android.widget.ImageButton
+import android.widget.TextView
 import com.armijoruiz.alberto.mykotlinapp.adapters.MyAdapter
-import com.armijoruiz.alberto.mykotlinapp.fragments.MusicFragment
+import com.armijoruiz.alberto.mykotlinapp.interfaces.CustomOnItemClickListener
+import com.armijoruiz.alberto.mykotlinapp.other.*
+import com.armijoruiz.alberto.mykotlinapp.services.PlayMusicService
 import kotlinx.android.synthetic.main.activity_main.*
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), CustomOnItemClickListener {
+
+
 
     var recyclerView:RecyclerView?= null
     val mLayoutManager = LinearLayoutManager(this)
     var mAdapter: MyAdapter?=null
+    var music_info : ArrayList<song> = ArrayList()
+    var currentPosition : Int = 0
+    var playing_music = false
+    var is_overlaying = false
 
+    
+    private var playcardbutton : ImageButton? = null
+    private var playbutton : ImageButton? = null
+    private var nextButton : ImageButton? = null
+    private var prevButton : ImageButton? = null
+    private var currentListening : TextView? = null
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -29,17 +47,88 @@ class MainActivity : AppCompatActivity() {
 
         // Pedimos permiso al usuario para acceder a la espacio del dispositivo.
         setupPermissions()
-        initFragment()
+        playcardbutton = findViewById(R.id.playcardButton)
+        playbutton = findViewById(R.id.playButton)
+        nextButton = findViewById(R.id.nextButton)
+        prevButton = findViewById(R.id.prevButton)
+        currentListening = findViewById(R.id.songName)
+
+        currentListening?.setText(music_info[currentPosition].name)
+
+        sliding_panel.setOnClickListener {
+            if (is_overlaying){
+                is_overlaying = false
+                playcardbutton?.visibility = View.VISIBLE
+            }else{
+                is_overlaying = true
+                playcardbutton?.visibility = View.INVISIBLE
+            }
+        }
+
+
+        playcardbutton?.setOnClickListener {
+            if(!playing_music){
+                playcardbutton?.setBackgroundResource(R.drawable.ic_play_white)
+                playing_music = true
+            }else{
+                playcardbutton?.setBackgroundResource(R.drawable.ic_pause_white)
+                playing_music = false
+            }
+
+            createMusicIntent(PLAYPAUSE)
+        }
+
+        playbutton?.setOnClickListener {
+            if(!playing_music){
+                playbutton?.setBackgroundResource(R.drawable.ic_play)
+                playing_music = true
+            }else{
+                playbutton?.setBackgroundResource(R.drawable.ic_pause)
+                playing_music = false
+            }
+            Log.i("play_pause: ", "playpause llamado")
+            createMusicIntent(PLAYPAUSE)
+        }
+
+        nextButton?.setOnClickListener {
+            Log.i("play_pause: ", "play_next llamado")
+            currentPosition = NextPosition(currentPosition,1)
+            currentListening?.setText(music_info[currentPosition].name)
+            createMusicIntent(NEXT,currentPosition)
+        }
+
+        prevButton?.setOnClickListener {
+            Log.i("play_pause: ", "play_prev llamado")
+            currentPosition = NextPosition(currentPosition,-1)
+            currentListening?.setText(music_info[currentPosition].name)
+            createMusicIntent(PREV,currentPosition)
+        }
 
     }
+    private fun NextPosition(currentPosition : Int,nextPosition:Int) : Int {
+        var newPosition = (currentPosition+nextPosition+music_info.size)%music_info.size
+        Log.i("current_position", currentPosition.toString())
+        Log.i("next_position", newPosition.toString())
 
-    private fun initFragment(){
-        val musicFragment:MusicFragment = MusicFragment()
-        val transaction : FragmentTransaction = supportFragmentManager.beginTransaction()
-        transaction.replace(R.id.music_layout, musicFragment)
-        transaction.commit()
+        return newPosition
     }
 
+    private fun createMusicIntent(action:String, position: Int = currentPosition){
+        var musicIntent = Intent(this, PlayMusicService::class.java)
+        if(PlayMusicService.serviceStarted)
+            musicIntent.setAction(action)
+        else
+            musicIntent.setAction(PLAYSONG)
+        musicIntent.putExtra(MyAdapter.MUSICITEMPOS,position)
+        startService(musicIntent)
+    }
+
+    override fun onItemClick(position: Int) {
+        playcardbutton?.setBackgroundResource(R.drawable.ic_pause_white)
+        playbutton?.setBackgroundResource(R.drawable.ic_pause)
+        currentListening?.setText(music_info[position].name)
+        createMusicIntent(PLAYSONG,position)
+    }
 
 
     private fun setupPermissions(){
@@ -70,14 +159,18 @@ class MainActivity : AppCompatActivity() {
 
     private fun displayMusic(){
 
-        val music_info = getMusic()
+        music_info = getMusic()
 
         recyclerView = findViewById<RecyclerView>(R.id.mRecyclerView)
         recyclerView?.setHasFixedSize(true)
 
         recyclerView?.layoutManager = mLayoutManager
 
-        mAdapter = MyAdapter(this, music_info)
+        mAdapter = MyAdapter(
+                this,
+                music_info,
+                this)
+
         recyclerView?.adapter = mAdapter
 
 
@@ -94,17 +187,21 @@ class MainActivity : AppCompatActivity() {
             val songTitle_id = songCursor.getColumnIndex(MediaStore.Audio.Media.TITLE)
             val songArtist_id = songCursor.getColumnIndex(MediaStore.Audio.Media.ARTIST)
             val songPath_id = songCursor.getColumnIndex(MediaStore.Audio.Media.DATA)
+            val dur_id = songCursor.getColumnIndex(MediaStore.Audio.Media.DURATION)
+            var duration : Int
             var songTitle : String
             var songArtist : String
             var songPath : String
 
 
             do {
+                duration = songCursor.getInt(dur_id) / 1000 // MediaStore.Audio.Media.Duration da los valores en ms.
                 songTitle = songCursor.getString(songTitle_id)
                 songArtist = songCursor.getString(songArtist_id)
                 songPath = songCursor.getString(songPath_id)
 
-                canciones.add(song(songArtist,songTitle,songPath))
+                if(duration > 30)
+                    canciones.add(song(songArtist,songTitle,songPath,duration))
 
             }while(songCursor.moveToNext())
         }
