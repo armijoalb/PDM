@@ -91,7 +91,7 @@ class playMusicService : Service() {
         return super.onStartCommand(intent, flags, startId)
     }
 
-    private fun getMusic():Unit{
+    private fun getMusic(){
 
         val contentResolver = contentResolver
         val songUri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI
@@ -120,6 +120,8 @@ class playMusicService : Service() {
             return
 
         mMediaPlayer = MediaPlayer()
+        mMediaPlayer?.isLooping = true
+
 
         mMediaPlayer?.setOnPreparedListener {
             mMediaPlayer?.start()
@@ -136,7 +138,6 @@ class playMusicService : Service() {
         }
 
     }
-
 
     private fun NextPosition(currentPosition : Int,nextPosition:Int) : Int {
         var newPosition = (currentPosition+nextPosition+musicDataList.size)%musicDataList.size
