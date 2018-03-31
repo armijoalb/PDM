@@ -20,7 +20,6 @@ import kotlinx.android.synthetic.main.layout_holder.view.*
 class MyAdapter(context : Context,songs: ArrayList<song>) : RecyclerView.Adapter<MyAdapter.ViewHolder>(){
     val mContext = context
     val canciones = songs
-    var musicList:ArrayList<String> = ArrayList()
 
     val PLAYSONG:String = "com.armijoruiz.alberto.mykotlinapp.action.PLAYSONG"
     val PLAYPAUSE:String = "com.armijoruiz.alberto.mykotlinapp.action.PLAYPAUSE"
@@ -53,7 +52,6 @@ class MyAdapter(context : Context,songs: ArrayList<song>) : RecyclerView.Adapter
         Log.i("play_pause: ", "playPause llamado")
         var musicIntent = Intent(mContext, playMusicService::class.java)
         musicIntent.setAction(PLAYPAUSE)
-        musicIntent.putStringArrayListExtra(MUSICLIST, musicList)
         mContext.startService(musicIntent)
     }
 
@@ -62,7 +60,6 @@ class MyAdapter(context : Context,songs: ArrayList<song>) : RecyclerView.Adapter
         Log.i("play_next: ", "playNextSong llamado")
         var musicIntent = Intent(mContext, playMusicService::class.java)
         musicIntent.setAction(NEXT)
-        musicIntent.putStringArrayListExtra(MUSICLIST, musicList)
         mContext.startService(musicIntent)
     }
 
@@ -71,7 +68,7 @@ class MyAdapter(context : Context,songs: ArrayList<song>) : RecyclerView.Adapter
         Log.i("play_prev: ", "playPrevSong llamado")
         var musicIntent = Intent(mContext, playMusicService::class.java)
         musicIntent.setAction(PREV)
-        musicIntent.putStringArrayListExtra(MUSICLIST, musicList)
+
         mContext.startService(musicIntent)
     }
 
@@ -83,14 +80,10 @@ class MyAdapter(context : Context,songs: ArrayList<song>) : RecyclerView.Adapter
 
         // Creamos un onClickListener para el cardView.
         holder?.itemView?.setOnClickListener {
-            for (i in 0 until canciones.size)
-                musicList.add(canciones[i].path)
 
             Toast.makeText(mContext, "reproducciendo", Toast.LENGTH_SHORT).show()
-            Log.i("musiclist", musicList.toString())
             var musicIntent = Intent(mContext, playMusicService::class.java)
             musicIntent.setAction(PLAYSONG)
-            musicIntent.putStringArrayListExtra(MUSICLIST, musicList)
             musicIntent.putExtra(MUSICITEMPOS, position)
             mContext.startService(musicIntent)
         }

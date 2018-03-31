@@ -7,8 +7,10 @@ import android.media.AudioManager
 import android.media.MediaPlayer
 import android.os.Build
 import android.os.IBinder
+import android.provider.MediaStore
 import android.util.Log
 import com.armijoruiz.alberto.mykotlinapp.adapters.MyAdapter
+import com.armijoruiz.alberto.mykotlinapp.song
 
 /**
  * Clase que crea un Servicio para reproducir música.
@@ -35,6 +37,9 @@ class playMusicService : Service() {
     override fun onCreate() {
         super.onCreate()
 
+        // Buscamos la música.
+        getMusic()
+
         // Creamos una instancia del audioManager.
         mAudioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
 
@@ -42,6 +47,9 @@ class playMusicService : Service() {
 
     override fun onDestroy() {
         super.onDestroy()
+
+        musicDataList.clear()
+        musicDataList = ArrayList()
 
         mMediaPlayer?.stop()
         mMediaPlayer?.release()
@@ -51,9 +59,9 @@ class playMusicService : Service() {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        musicDataList = intent!!.getStringArrayListExtra(MyAdapter.MUSICLIST)
 
-        when(intent.action){
+
+        when(intent!!.action){
             PLAYSONG -> {
                 // cogemos los datos que le hemos pasado al intent.
                 currentPos = intent.getIntExtra(MyAdapter.MUSICITEMPOS,0)
@@ -81,6 +89,28 @@ class playMusicService : Service() {
 
 
         return super.onStartCommand(intent, flags, startId)
+    }
+
+    private fun getMusic():Unit{
+
+        val contentResolver = contentResolver
+        val songUri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI
+        val songCursor = contentResolver.query(songUri, null, null, null,null)
+
+        if(songCursor != null && songCursor.moveToFirst()){
+            val songPath_id = songCursor.getColumnIndex(MediaStore.Audio.Media.DATA)
+            var songPath : String
+
+
+            do {
+
+                songPath = songCursor.getString(songPath_id)
+
+                musicDataList.add(songPath)
+
+            }while(songCursor.moveToNext())
+        }
+
     }
 
     private fun setupMediaPlayer(){
