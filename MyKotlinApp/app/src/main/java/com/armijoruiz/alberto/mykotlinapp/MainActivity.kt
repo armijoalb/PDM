@@ -15,6 +15,7 @@ import android.util.Log
 import android.view.View
 import android.widget.ImageButton
 import android.widget.TextView
+import com.armijoruiz.alberto.mykotlinapp.Structures.Song
 import com.armijoruiz.alberto.mykotlinapp.adapters.MyAdapter
 import com.armijoruiz.alberto.mykotlinapp.interfaces.CustomOnItemClickListener
 import com.armijoruiz.alberto.mykotlinapp.other.*
@@ -28,12 +29,12 @@ class MainActivity : AppCompatActivity(), CustomOnItemClickListener {
     var recyclerView:RecyclerView?= null
     val mLayoutManager = LinearLayoutManager(this)
     var mAdapter: MyAdapter?=null
-    var music_info : ArrayList<song> = ArrayList()
+    var music_info : ArrayList<Song> = ArrayList()
     var currentPosition : Int = 0
     var playing_music = false
     var is_overlaying = false
 
-    
+
     private var playcardbutton : ImageButton? = null
     private var playbutton : ImageButton? = null
     private var nextButton : ImageButton? = null
@@ -55,51 +56,48 @@ class MainActivity : AppCompatActivity(), CustomOnItemClickListener {
 
         currentListening?.setText(music_info[currentPosition].name)
 
+
+
         sliding_panel.setOnClickListener {
             if (is_overlaying){
-                is_overlaying = false
-                playcardbutton?.visibility = View.VISIBLE
-            }else{
-                is_overlaying = true
+                Log.i("sliding_panel", "is_overlaying")
                 playcardbutton?.visibility = View.INVISIBLE
+            }else{
+                Log.i("sliding_panel" ,"not overlaying")
+                playcardbutton?.visibility = View.VISIBLE
             }
+
+            is_overlaying = !is_overlaying
         }
 
 
         playcardbutton?.setOnClickListener {
-            if(!playing_music){
-                playcardbutton?.setBackgroundResource(R.drawable.ic_play_white)
-                playing_music = true
-            }else{
-                playcardbutton?.setBackgroundResource(R.drawable.ic_pause_white)
-                playing_music = false
-            }
-
+            changePlayIcons()
             createMusicIntent(PLAYPAUSE)
         }
 
         playbutton?.setOnClickListener {
-            if(!playing_music){
-                playbutton?.setBackgroundResource(R.drawable.ic_play)
-                playing_music = true
-            }else{
-                playbutton?.setBackgroundResource(R.drawable.ic_pause)
-                playing_music = false
-            }
+            changePlayIcons()
             Log.i("play_pause: ", "playpause llamado")
             createMusicIntent(PLAYPAUSE)
         }
 
         nextButton?.setOnClickListener {
+            playcardbutton?.setImageResource(R.drawable.ic_pause_white)
+            playbutton?.setImageResource(R.drawable.ic_pause)
             Log.i("play_pause: ", "play_next llamado")
             currentPosition = NextPosition(currentPosition,1)
+            Log.i("nextButton:", "next_position: " + currentPosition )
             currentListening?.setText(music_info[currentPosition].name)
             createMusicIntent(NEXT,currentPosition)
         }
 
         prevButton?.setOnClickListener {
+            playcardbutton?.setImageResource(R.drawable.ic_pause_white)
+            playbutton?.setImageResource(R.drawable.ic_pause)
             Log.i("play_pause: ", "play_prev llamado")
             currentPosition = NextPosition(currentPosition,-1)
+            Log.i("prevButton:", "next_position: " + currentPosition )
             currentListening?.setText(music_info[currentPosition].name)
             createMusicIntent(PREV,currentPosition)
         }
@@ -123,9 +121,23 @@ class MainActivity : AppCompatActivity(), CustomOnItemClickListener {
         startService(musicIntent)
     }
 
+    private fun changePlayIcons(){
+        if(playing_music){
+            playcardbutton?.setImageResource(R.drawable.ic_play_white)
+            playbutton?.setImageResource(R.drawable.ic_play)
+        }else{
+            playcardbutton?.setImageResource(R.drawable.ic_pause_white)
+            playbutton?.setImageResource(R.drawable.ic_pause)
+        }
+
+        playing_music = !playing_music
+    }
+
     override fun onItemClick(position: Int) {
-        playcardbutton?.setBackgroundResource(R.drawable.ic_pause_white)
-        playbutton?.setBackgroundResource(R.drawable.ic_pause)
+        playcardbutton?.setImageResource(R.drawable.ic_pause_white)
+        playbutton?.setImageResource(R.drawable.ic_pause)
+        currentPosition = position
+        playing_music = true
         currentListening?.setText(music_info[position].name)
         createMusicIntent(PLAYSONG,position)
     }
@@ -176,8 +188,8 @@ class MainActivity : AppCompatActivity(), CustomOnItemClickListener {
 
     }
 
-    private fun getMusic():ArrayList<song>{
-        val canciones = ArrayList<song>()
+    private fun getMusic():ArrayList<Song>{
+        val canciones = ArrayList<Song>()
 
         val contentResolver = contentResolver
         val songUri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI
@@ -201,7 +213,7 @@ class MainActivity : AppCompatActivity(), CustomOnItemClickListener {
                 songPath = songCursor.getString(songPath_id)
 
                 if(duration > 30)
-                    canciones.add(song(songArtist,songTitle,songPath,duration))
+                    canciones.add(Song(songArtist, songTitle, songPath, duration))
 
             }while(songCursor.moveToNext())
         }
