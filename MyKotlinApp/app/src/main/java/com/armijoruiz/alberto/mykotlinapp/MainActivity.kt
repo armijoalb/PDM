@@ -11,6 +11,7 @@ import android.content.pm.PackageManager
 import android.os.Build
 import android.provider.MediaStore
 import android.support.v4.app.ActivityCompat
+import android.support.v4.widget.SlidingPaneLayout
 import android.util.Log
 import android.view.View
 import android.widget.ImageButton
@@ -20,10 +21,13 @@ import com.armijoruiz.alberto.mykotlinapp.adapters.MyAdapter
 import com.armijoruiz.alberto.mykotlinapp.interfaces.CustomOnItemClickListener
 import com.armijoruiz.alberto.mykotlinapp.other.*
 import com.armijoruiz.alberto.mykotlinapp.services.PlayMusicService
+import com.sothree.slidinguppanel.SlidingUpPanelLayout
+import com.sothree.slidinguppanel.SlidingUpPanelLayout.PanelSlideListener
+import com.sothree.slidinguppanel.SlidingUpPanelLayout.PanelState
 import kotlinx.android.synthetic.main.activity_main.*
 
-class MainActivity : AppCompatActivity(), CustomOnItemClickListener {
-
+class MainActivity : AppCompatActivity(), CustomOnItemClickListener, PanelSlideListener
+{
 
 
     var recyclerView:RecyclerView?= null
@@ -40,6 +44,7 @@ class MainActivity : AppCompatActivity(), CustomOnItemClickListener {
     private var nextButton : ImageButton? = null
     private var prevButton : ImageButton? = null
     private var currentListening : TextView? = null
+    private var slidepanel : SlidingUpPanelLayout? = null
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -48,28 +53,55 @@ class MainActivity : AppCompatActivity(), CustomOnItemClickListener {
 
         // Pedimos permiso al usuario para acceder a la espacio del dispositivo.
         setupPermissions()
+
+        // Obtenemos los botones y elementos de la pantalla.
         playcardbutton = findViewById(R.id.playcardButton)
         playbutton = findViewById(R.id.playButton)
         nextButton = findViewById(R.id.nextButton)
         prevButton = findViewById(R.id.prevButton)
         currentListening = findViewById(R.id.songName)
+        slidepanel = findViewById(R.id.sliding_panel)
 
-        currentListening?.setText(music_info[currentPosition].name)
+        // Agregamos onClickListener.
+        setupButtons()
+
+        // Agregamos funcionalidad al slideUpPanel.
+        setupSlidePanel()
 
 
 
-        sliding_panel.setOnClickListener {
-            if (is_overlaying){
-                Log.i("sliding_panel", "is_overlaying")
+    }
+
+    private fun setupSlidePanel(){
+        slidepanel?.addPanelSlideListener(this)
+    }
+
+    override fun onPanelSlide(panel: View?, slideOffset: Float) {
+    }
+
+    override fun onPanelStateChanged(panel: View?, previousState: SlidingUpPanelLayout.PanelState?, newState: SlidingUpPanelLayout.PanelState?) {
+        Log.i("slideuppanel", "sliding panel state changed")
+        Log.i("slideuppanel", "newstate: "+newState)
+
+        when(newState){
+            PanelState.EXPANDED ->{
                 playcardbutton?.visibility = View.INVISIBLE
-            }else{
-                Log.i("sliding_panel" ,"not overlaying")
+            }
+            PanelState.COLLAPSED ->{
                 playcardbutton?.visibility = View.VISIBLE
             }
-
-            is_overlaying = !is_overlaying
+            PanelState.DRAGGING ->{
+                if(previousState == PanelState.EXPANDED)
+                    playcardbutton?.visibility = View.VISIBLE
+                else
+                    playcardbutton?.visibility = View.INVISIBLE
+            }
         }
+    }
 
+
+    private fun setupButtons(){
+        currentListening?.setText(music_info[currentPosition].name)
 
         playcardbutton?.setOnClickListener {
             changePlayIcons()
@@ -103,6 +135,7 @@ class MainActivity : AppCompatActivity(), CustomOnItemClickListener {
         }
 
     }
+
     private fun NextPosition(currentPosition : Int,nextPosition:Int) : Int {
         var newPosition = (currentPosition+nextPosition+music_info.size)%music_info.size
         Log.i("current_position", currentPosition.toString())
@@ -223,3 +256,4 @@ class MainActivity : AppCompatActivity(), CustomOnItemClickListener {
 
 
 }
+

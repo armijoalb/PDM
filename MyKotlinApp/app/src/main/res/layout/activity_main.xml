@@ -17,7 +17,8 @@
         sothree:layout_constraintTop_toTopOf="parent"
         sothree:umanoDragView="@id/music_layout"
         sothree:umanoOverlay="true"
-        sothree:umanoShadowHeight="4dp">
+        sothree:umanoPanelHeight="@android:dimen/notification_large_icon_height"
+        sothree:umanoShadowHeight="20dp">
 
         <!-- MAIN CONTENT -->
         <android.support.v7.widget.RecyclerView
