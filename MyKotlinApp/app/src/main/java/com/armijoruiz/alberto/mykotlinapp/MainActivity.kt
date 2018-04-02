@@ -15,6 +15,7 @@ import android.support.v4.widget.SlidingPaneLayout
 import android.util.Log
 import android.view.View
 import android.widget.ImageButton
+import android.widget.SeekBar
 import android.widget.TextView
 import com.armijoruiz.alberto.mykotlinapp.Structures.Song
 import com.armijoruiz.alberto.mykotlinapp.adapters.MyAdapter
@@ -22,11 +23,12 @@ import com.armijoruiz.alberto.mykotlinapp.interfaces.CustomOnItemClickListener
 import com.armijoruiz.alberto.mykotlinapp.other.*
 import com.armijoruiz.alberto.mykotlinapp.services.PlayMusicService
 import com.sothree.slidinguppanel.SlidingUpPanelLayout
-import com.sothree.slidinguppanel.SlidingUpPanelLayout.PanelSlideListener
 import com.sothree.slidinguppanel.SlidingUpPanelLayout.PanelState
 import kotlinx.android.synthetic.main.activity_main.*
+import org.w3c.dom.Text
+import java.time.Duration
 
-class MainActivity : AppCompatActivity(), CustomOnItemClickListener, PanelSlideListener
+class MainActivity : AppCompatActivity(), CustomOnItemClickListener
 {
 
 
@@ -45,6 +47,13 @@ class MainActivity : AppCompatActivity(), CustomOnItemClickListener, PanelSlideL
     private var prevButton : ImageButton? = null
     private var currentListening : TextView? = null
     private var slidepanel : SlidingUpPanelLayout? = null
+    private var seekBar : SeekBar? = null
+    private var maxDuration : TextView? = null
+    private var currentDuration : TextView? = null
+
+    companion object {
+        val PROGRESS = "progress"
+    }
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -61,45 +70,51 @@ class MainActivity : AppCompatActivity(), CustomOnItemClickListener, PanelSlideL
         prevButton = findViewById(R.id.prevButton)
         currentListening = findViewById(R.id.songName)
         slidepanel = findViewById(R.id.sliding_panel)
+        seekBar = findViewById(R.id.seekBar)
+        maxDuration = findViewById(R.id.totalDuration)
+        currentDuration = findViewById(R.id.currentDuration)
 
         // Agregamos onClickListener.
         setupButtons()
 
         // Agregamos funcionalidad al slideUpPanel.
         setupSlidePanel()
-
-
-
     }
 
+    // Función para agregar funcionalidad al Sliding up panel.
     private fun setupSlidePanel(){
-        slidepanel?.addPanelSlideListener(this)
+        slidepanel?.addPanelSlideListener(object : SlidingUpPanelLayout.PanelSlideListener{
+
+            // Función que se llama cuando se hace slide con el panel.
+            override fun onPanelSlide(panel: View?, slideOffset: Float) {
+            }
+
+            // Función que se llama cuando el panel cambia de estado.
+            override fun onPanelStateChanged(panel: View?, previousState: SlidingUpPanelLayout.PanelState?, newState: SlidingUpPanelLayout.PanelState?) {
+                Log.i("slideuppanel", "sliding panel state changed")
+                Log.i("slideuppanel", "newstate: "+newState)
+
+                when(newState){
+                    PanelState.EXPANDED ->{
+                        playcardbutton?.visibility = View.INVISIBLE
+                    }
+                    PanelState.COLLAPSED ->{
+                        playcardbutton?.visibility = View.VISIBLE
+                    }
+                    PanelState.DRAGGING ->{
+                        if(previousState == PanelState.EXPANDED)
+                            playcardbutton?.visibility = View.VISIBLE
+                        else
+                            playcardbutton?.visibility = View.INVISIBLE
+                    }
+                }
+            }
+
+        })
     }
 
-    override fun onPanelSlide(panel: View?, slideOffset: Float) {
-    }
 
-    override fun onPanelStateChanged(panel: View?, previousState: SlidingUpPanelLayout.PanelState?, newState: SlidingUpPanelLayout.PanelState?) {
-        Log.i("slideuppanel", "sliding panel state changed")
-        Log.i("slideuppanel", "newstate: "+newState)
-
-        when(newState){
-            PanelState.EXPANDED ->{
-                playcardbutton?.visibility = View.INVISIBLE
-            }
-            PanelState.COLLAPSED ->{
-                playcardbutton?.visibility = View.VISIBLE
-            }
-            PanelState.DRAGGING ->{
-                if(previousState == PanelState.EXPANDED)
-                    playcardbutton?.visibility = View.VISIBLE
-                else
-                    playcardbutton?.visibility = View.INVISIBLE
-            }
-        }
-    }
-
-
+    // Función que crea los listener de los botones, seekBar, etc...
     private fun setupButtons(){
         currentListening?.setText(music_info[currentPosition].name)
 
@@ -121,6 +136,7 @@ class MainActivity : AppCompatActivity(), CustomOnItemClickListener, PanelSlideL
             currentPosition = NextPosition(currentPosition,1)
             Log.i("nextButton:", "next_position: " + currentPosition )
             currentListening?.setText(music_info[currentPosition].name)
+            setSeekBarParams(music_info[currentPosition].duration)
             createMusicIntent(NEXT,currentPosition)
         }
 
@@ -131,11 +147,45 @@ class MainActivity : AppCompatActivity(), CustomOnItemClickListener, PanelSlideL
             currentPosition = NextPosition(currentPosition,-1)
             Log.i("prevButton:", "next_position: " + currentPosition )
             currentListening?.setText(music_info[currentPosition].name)
+            setSeekBarParams(music_info[currentPosition].duration)
             createMusicIntent(PREV,currentPosition)
         }
 
+        seekBar?.setOnSeekBarChangeListener(object :SeekBar.OnSeekBarChangeListener{
+            override fun onProgressChanged(p0: SeekBar?, p1: Int, p2: Boolean) {
+                // DO NOTHING.
+            }
+
+            override fun onStartTrackingTouch(p0: SeekBar?) {
+               // DO NOTHING.
+            }
+
+            override fun onStopTrackingTouch(seekbar: SeekBar) {
+                // Obtenemos el progreso actual.
+                Log.i("seekBar", "new progress"+ seekbar.progress)
+                var act_progress:Int = seekbar.progress
+                createMusicIntent(SET_PROGRESS,currentPosition,act_progress)
+            }
+        })
+
+        setSeekBarParams(music_info[currentPosition].duration)
+
     }
 
+    // Función para establecer los parámetros del seekbar.
+    private fun setSeekBarParams(max : Int, current: Int = 0){
+        seekBar?.progress = current
+        seekBar?.max = max
+
+        val max_secs:Int = max % 60
+        val max_min:Int = max / 60
+        val current_secs:Int = current%60
+        val current_min:Int = current/60
+        maxDuration?.text = MyAdapter.getFormattedTime(max_min, max_secs)
+        currentDuration?.text = MyAdapter.getFormattedTime(current_min,current_secs)
+    }
+
+    // Función que calcula la siguiente posición.
     private fun NextPosition(currentPosition : Int,nextPosition:Int) : Int {
         var newPosition = (currentPosition+nextPosition+music_info.size)%music_info.size
         Log.i("current_position", currentPosition.toString())
@@ -144,13 +194,14 @@ class MainActivity : AppCompatActivity(), CustomOnItemClickListener, PanelSlideL
         return newPosition
     }
 
-    private fun createMusicIntent(action:String, position: Int = currentPosition){
+    private fun createMusicIntent(action:String, position: Int = currentPosition, seek_pos : Int = 0){
         var musicIntent = Intent(this, PlayMusicService::class.java)
         if(PlayMusicService.serviceStarted)
             musicIntent.setAction(action)
         else
             musicIntent.setAction(PLAYSONG)
         musicIntent.putExtra(MyAdapter.MUSICITEMPOS,position)
+        musicIntent.putExtra(PROGRESS, seek_pos)
         startService(musicIntent)
     }
 
@@ -166,16 +217,19 @@ class MainActivity : AppCompatActivity(), CustomOnItemClickListener, PanelSlideL
         playing_music = !playing_music
     }
 
+    // Implementación de la interfaz para onClickItem del RecyclerView.
     override fun onItemClick(position: Int) {
         playcardbutton?.setImageResource(R.drawable.ic_pause_white)
         playbutton?.setImageResource(R.drawable.ic_pause)
         currentPosition = position
         playing_music = true
         currentListening?.setText(music_info[position].name)
+        setSeekBarParams(music_info[currentPosition].duration)
         createMusicIntent(PLAYSONG,position)
     }
 
 
+    // Funciones para pedir permisos.
     private fun setupPermissions(){
         val permission = ContextCompat.checkSelfPermission(this,Manifest.permission.READ_EXTERNAL_STORAGE)
         if(Build.VERSION.SDK_INT >= 23){
@@ -202,6 +256,7 @@ class MainActivity : AppCompatActivity(), CustomOnItemClickListener, PanelSlideL
         }
     }
 
+    // Función para mostrar la música encontrada.
     private fun displayMusic(){
 
         music_info = getMusic()
@@ -221,6 +276,7 @@ class MainActivity : AppCompatActivity(), CustomOnItemClickListener, PanelSlideL
 
     }
 
+    // Función para encontrar las canciones dentro del dispositivo.
     private fun getMusic():ArrayList<Song>{
         val canciones = ArrayList<Song>()
 
@@ -245,6 +301,7 @@ class MainActivity : AppCompatActivity(), CustomOnItemClickListener, PanelSlideL
                 songArtist = songCursor.getString(songArtist_id)
                 songPath = songCursor.getString(songPath_id)
 
+                // Solo metemos aquellas "canciones" que sean más de 30 segs, para evitar mostrar tonos.
                 if(duration > 30)
                     canciones.add(Song(songArtist, songTitle, songPath, duration))
 

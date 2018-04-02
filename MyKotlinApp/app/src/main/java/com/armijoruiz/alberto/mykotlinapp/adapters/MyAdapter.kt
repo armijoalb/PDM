@@ -9,7 +9,6 @@ import com.armijoruiz.alberto.mykotlinapp.R
 import com.armijoruiz.alberto.mykotlinapp.interfaces.CustomOnItemClickListener
 import com.armijoruiz.alberto.mykotlinapp.Structures.Song
 import kotlinx.android.synthetic.main.layout_holder.view.*
-import kotlin.math.min
 
 /**
  * Created by Alberto on 06/03/2018.
@@ -23,6 +22,7 @@ class MyAdapter(context : Context, songs: ArrayList<Song>, val itemlistener : Cu
 
     companion object {
         val MUSICITEMPOS = "MusicItemPos"
+        fun getFormattedTime(min:Int,sec:Int) = String.format("%d:%02d",min,sec)
     }
 
 
@@ -48,10 +48,9 @@ class MyAdapter(context : Context, songs: ArrayList<Song>, val itemlistener : Cu
     override fun onBindViewHolder(holder: ViewHolder?, position: Int) {
         listener = itemlistener
         holder?.itemView?.nombreMusica?.text = canciones[position].name
-        val minutes:String = (canciones[position].duration / 60).toString()
-        val sec:String = (canciones[position].duration % 60).toString()
-        val formattedDuration:String = minutes+":"+sec
-        holder?.itemView?.duration?.text =formattedDuration
+        val minutes:Int = canciones[position].duration / 60
+        val sec:Int = canciones[position].duration % 60
+        holder?.itemView?.duration?.text = getFormattedTime(minutes,sec)
 
         // Creamos un onClickListener para el cardView.
         holder?.itemView?.setOnClickListener(object : View.OnClickListener{

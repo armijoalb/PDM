@@ -8,6 +8,7 @@ import android.media.MediaPlayer
 import android.os.IBinder
 import android.provider.MediaStore
 import android.util.Log
+import com.armijoruiz.alberto.mykotlinapp.MainActivity
 import com.armijoruiz.alberto.mykotlinapp.adapters.MyAdapter
 import com.armijoruiz.alberto.mykotlinapp.other.*
 
@@ -94,6 +95,10 @@ class PlayMusicService : Service() {
                 // Llamamos a PlayPrev.
                 playPrev()
             }
+            SET_PROGRESS ->{
+                seekPosition = intent.getIntExtra(MainActivity.PROGRESS,0) * 1000
+                resumeMusic()
+            }
         }
 
 
@@ -167,11 +172,10 @@ class PlayMusicService : Service() {
     }
 
     private fun resumeMusic(){
-        if(!mMediaPlayer!!.isPlaying){
-            Log.i("hi", "hello")
-            mMediaPlayer!!.seekTo(seekPosition)
-            mMediaPlayer!!.start()
-        }
+        Log.i("mediaPlayer", "resumeMusic")
+        mMediaPlayer!!.seekTo(seekPosition)
+        mMediaPlayer!!.start()
+
     }
 
     private fun playNext(){
