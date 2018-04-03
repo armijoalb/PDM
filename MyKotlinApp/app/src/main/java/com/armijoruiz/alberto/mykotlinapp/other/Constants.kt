@@ -5,4 +5,5 @@ const val PLAYPAUSE:String = "com.armijoruiz.alberto.mykotlinapp.action.PLAYPAUS
 const val NEXT:String = "com.armijoruiz.alberto.mykotlinapp.action.NEXT"
 const val PREV:String = "com.armijoruiz.alberto.mykotlinapp.action.PREV"
 const val SET_PROGRESS:String = "com.armijoruiz.alberto.mykotlinapp.action.SET_PROGRESS"
+const val FINISH :String = "com.armijoruiz.alberto.mykotlinapp.action.FINISH"
 

@@ -11,7 +11,6 @@ import android.content.pm.PackageManager
 import android.os.Build
 import android.provider.MediaStore
 import android.support.v4.app.ActivityCompat
-import android.support.v4.widget.SlidingPaneLayout
 import android.util.Log
 import android.view.View
 import android.widget.ImageButton
@@ -25,9 +24,6 @@ import com.armijoruiz.alberto.mykotlinapp.other.*
 import com.armijoruiz.alberto.mykotlinapp.services.PlayMusicService
 import com.sothree.slidinguppanel.SlidingUpPanelLayout
 import com.sothree.slidinguppanel.SlidingUpPanelLayout.PanelState
-import kotlinx.android.synthetic.main.activity_main.*
-import org.w3c.dom.Text
-import java.time.Duration
 
 class MainActivity : AppCompatActivity(), CustomOnItemClickListener, CustomMusicListener
 {
@@ -37,7 +33,6 @@ class MainActivity : AppCompatActivity(), CustomOnItemClickListener, CustomMusic
     var music_info : ArrayList<Song> = ArrayList()
     var currentPosition : Int = 0
     var playing_music = false
-    var is_overlaying = false
 
 
     private var playcardbutton : ImageButton? = null
@@ -83,18 +78,29 @@ class MainActivity : AppCompatActivity(), CustomOnItemClickListener, CustomMusic
         setupSlidePanel()
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        Log.i("onDestroy", "killing app")
+
+        if(PlayMusicService.serviceStarted)
+            createMusicIntent(FINISH,currentPosition)
+    }
+
     override fun onResume() {
         super.onResume()
-        Log.i("on_resume", "set on resume")
+        Log.i("on_resume", "set on resume" + " is media playing :"+ playing_music)
         currentPosition = Config.current_position
-        currentListening?.text = music_info[currentPosition].name
+        if(music_info.size > 0)
+            currentListening?.text = music_info[currentPosition].name
+        playing_music = Config.is_media_playing
         changePlayIcons()
     }
 
     override fun onPause() {
         super.onPause()
-        Log.i("on_pause","set on pause")
+        Log.i("on_pause","set on pause" + " is media playing: " + playing_music)
         Config.current_position = currentPosition
+        Config.is_media_playing = playing_music
         Log.i("on_pause", "finish")
     }
 
@@ -133,35 +139,43 @@ class MainActivity : AppCompatActivity(), CustomOnItemClickListener, CustomMusic
 
     // Función que crea los listener de los botones, seekBar, etc...
     private fun setupButtons(){
-        currentListening?.setText(music_info[currentPosition].name)
+        if(music_info.size > 0) {
+            currentListening?.setText(music_info[currentPosition].name)
+            setSeekBarParams(music_info[currentPosition].duration)
+        }
 
         playcardbutton?.setOnClickListener {
+            playing_music = !playing_music
             changePlayIcons()
             createMusicIntent(PLAYPAUSE)
+
         }
 
         playbutton?.setOnClickListener {
+            playing_music = !playing_music
             changePlayIcons()
             Log.i("play_pause: ", "playpause llamado")
             createMusicIntent(PLAYPAUSE)
+
         }
 
         nextButton?.setOnClickListener {
-            playcardbutton?.setImageResource(R.drawable.ic_pause_white)
-            playbutton?.setImageResource(R.drawable.ic_pause)
             Log.i("play_pause: ", "play_next llamado")
             currentPosition = NextPosition(currentPosition,1)
+            playing_music = true
+            changePlayIcons()
             Log.i("nextButton:", "next_position: " + currentPosition )
             currentListening?.setText(music_info[currentPosition].name)
             setSeekBarParams(music_info[currentPosition].duration)
             createMusicIntent(NEXT,currentPosition)
+
         }
 
         prevButton?.setOnClickListener {
-            playcardbutton?.setImageResource(R.drawable.ic_pause_white)
-            playbutton?.setImageResource(R.drawable.ic_pause)
             Log.i("play_pause: ", "play_prev llamado")
             currentPosition = NextPosition(currentPosition,-1)
+            playing_music = true
+            changePlayIcons()
             Log.i("prevButton:", "next_position: " + currentPosition )
             currentListening?.setText(music_info[currentPosition].name)
             setSeekBarParams(music_info[currentPosition].duration)
@@ -181,12 +195,12 @@ class MainActivity : AppCompatActivity(), CustomOnItemClickListener, CustomMusic
                 // Obtenemos el progreso actual.
                 Log.i("seekBar", "new progress"+ seekbar.progress)
                 var act_progress:Int = seekbar.progress
+                playing_music = true
                 changePlayIcons()
                 createMusicIntent(SET_PROGRESS,currentPosition,act_progress)
             }
         })
 
-        setSeekBarParams(music_info[currentPosition].duration)
 
     }
 
@@ -235,27 +249,28 @@ class MainActivity : AppCompatActivity(), CustomOnItemClickListener, CustomMusic
 
         musicIntent.putExtra(MyAdapter.MUSICITEMPOS,position)
         musicIntent.putExtra(PROGRESS, seek_pos)
-        startService(musicIntent)
+        ContextCompat.startForegroundService(this,musicIntent)
     }
 
     private fun changePlayIcons(){
-        if(playing_music){
+        if(!playing_music){
+            Log.i("changePlayButtons: ", "it's not playing")
             playcardbutton?.setImageResource(R.drawable.ic_play_white)
             playbutton?.setImageResource(R.drawable.ic_play)
         }else{
+            Log.i("changePlayButtons: ", "it's playing")
             playcardbutton?.setImageResource(R.drawable.ic_pause_white)
             playbutton?.setImageResource(R.drawable.ic_pause)
         }
 
-        playing_music = !playing_music
+
     }
 
     // Implementación de la interfaz para onClickItem del RecyclerView.
     override fun onItemClick(position: Int) {
-        playcardbutton?.setImageResource(R.drawable.ic_pause_white)
-        playbutton?.setImageResource(R.drawable.ic_pause)
         currentPosition = position
         playing_music = true
+        changePlayIcons()
         currentListening?.setText(music_info[position].name)
         setSeekBarParams(music_info[currentPosition].duration)
         createMusicIntent(PLAYSONG,position)
@@ -293,6 +308,9 @@ class MainActivity : AppCompatActivity(), CustomOnItemClickListener, CustomMusic
     private fun displayMusic(){
 
         music_info = getMusic()
+
+        // Agregamos onClickListener.
+        setupButtons()
 
         recyclerView = findViewById<RecyclerView>(R.id.mRecyclerView)
         recyclerView?.setHasFixedSize(true)

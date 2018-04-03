@@ -2,8 +2,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.armijoruiz.alberto.mykotlinapp">
 
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
-
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.WAKE_LOCK"/>
 
     <application
         android:allowBackup="true"
@@ -15,9 +16,11 @@
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <service android:name=".services.PlayMusicService">
             <intent-filter>
                 <action android:name="com.armijoruiz.alberto.mykotlinapp.action.PLAYSONG" />
@@ -28,6 +31,9 @@
                 <action android:name="com.armijoruiz.alberto.mykotlinapp.action.FINISH" />
             </intent-filter>
         </service>
+
+        <receiver android:name=".receivers.NotificationControlsListener"/>
+
     </application>
 
 </manifest>
