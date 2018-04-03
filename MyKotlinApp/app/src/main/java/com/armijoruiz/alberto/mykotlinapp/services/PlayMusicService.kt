@@ -172,10 +172,12 @@ class PlayMusicService : Service() {
         if(is_playing){
             mProgressBarHandler!!.post(object: Runnable{
                 override fun run() {
-                    val current_progress = mMediaPlayer!!.currentPosition / 1000
-                    customMusicListener.onUpdateProgress(current_progress)
-                    mProgressBarHandler!!.removeCallbacks(null)
-                    mProgressBarHandler!!.postDelayed(this, 1000)
+                    if (mMediaPlayer != null){
+                        val current_progress : Int = mMediaPlayer!!.currentPosition
+                        customMusicListener.onUpdateProgress(current_progress/1000)
+                        mProgressBarHandler!!.removeCallbacks(null)
+                        mProgressBarHandler!!.postDelayed(this, 1000)
+                    }
                 }
             })
         }else{

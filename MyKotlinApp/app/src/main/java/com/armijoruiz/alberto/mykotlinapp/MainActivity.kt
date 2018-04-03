@@ -83,6 +83,20 @@ class MainActivity : AppCompatActivity(), CustomOnItemClickListener, CustomMusic
         setupSlidePanel()
     }
 
+    override fun onResume() {
+        super.onResume()
+        Log.i("on_resume", "set on resume")
+        currentPosition = Config.current_position
+        currentListening?.text = music_info[currentPosition].name
+    }
+
+    override fun onPause() {
+        super.onPause()
+        Log.i("on_pause","set on pause")
+        Config.current_position = currentPosition
+        Log.i("on_pause", "finish")
+    }
+
     // Función para agregar funcionalidad al Sliding up panel.
     private fun setupSlidePanel(){
         slidepanel?.addPanelSlideListener(object : SlidingUpPanelLayout.PanelSlideListener{
@@ -185,6 +199,7 @@ class MainActivity : AppCompatActivity(), CustomOnItemClickListener, CustomMusic
         currentPosition = song_index
         currentListening?.text = music_info[currentPosition].name
         setSeekBarParams(music_info[currentPosition].duration)
+        Config.current_position = currentPosition
     }
 
     // Función para establecer los parámetros del seekbar.
@@ -215,6 +230,7 @@ class MainActivity : AppCompatActivity(), CustomOnItemClickListener, CustomMusic
             musicIntent.setAction(action)
         else
             musicIntent.setAction(PLAYSONG)
+
         musicIntent.putExtra(MyAdapter.MUSICITEMPOS,position)
         musicIntent.putExtra(PROGRESS, seek_pos)
         startService(musicIntent)
@@ -287,7 +303,6 @@ class MainActivity : AppCompatActivity(), CustomOnItemClickListener, CustomMusic
                 this)
 
         recyclerView?.adapter = mAdapter
-
 
     }
 
