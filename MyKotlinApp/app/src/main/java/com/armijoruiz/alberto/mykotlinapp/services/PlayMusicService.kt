@@ -93,6 +93,7 @@ class PlayMusicService : Service() {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
 
 
+        Log.i("onStartCommand","Iniciando")
         when(intent!!.action){
             PLAYSONG -> {
                 // cogemos los datos que le hemos pasado al intent.
@@ -131,6 +132,7 @@ class PlayMusicService : Service() {
                 customMusicListener.onUpdateProgress(0)
                 destroyPlayingService()
             }
+            else-> Log.i("onStartCommand", "not reconised action")
         }
 
 
@@ -253,13 +255,13 @@ class PlayMusicService : Service() {
 
     private fun getActionIntent(action:String):PendingIntent{
         val intent = Intent(this, NotificationControlsListener::class.java)
-        Log.i("getActionIntent",action)
+        intent.setAction(action)
         return PendingIntent.getBroadcast(this, 0,intent,0)
     }
 
     private fun getContentIntent():PendingIntent{
-        val contentIntent = Intent(applicationContext,MainActivity::class.java)
-        return PendingIntent.getActivity(applicationContext,0,contentIntent,0)
+        val contentIntent = Intent(this,MainActivity::class.java)
+        return PendingIntent.getActivity(this,0,contentIntent,0)
     }
 
     private fun handleProgressBar(is_playing : Boolean){
