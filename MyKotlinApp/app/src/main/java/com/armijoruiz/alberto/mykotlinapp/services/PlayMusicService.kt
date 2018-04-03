@@ -5,11 +5,13 @@ import android.content.Context
 import android.content.Intent
 import android.media.AudioManager
 import android.media.MediaPlayer
+import android.os.Handler
 import android.os.IBinder
 import android.provider.MediaStore
 import android.util.Log
 import com.armijoruiz.alberto.mykotlinapp.MainActivity
 import com.armijoruiz.alberto.mykotlinapp.adapters.MyAdapter
+import com.armijoruiz.alberto.mykotlinapp.interfaces.CustomMusicListener
 import com.armijoruiz.alberto.mykotlinapp.other.*
 
 
@@ -28,9 +30,11 @@ class PlayMusicService : Service() {
         private var mMediaPlayer:MediaPlayer? = null
         private var seekPosition : Int =  0
         private var mAudioManager: AudioManager? = null
+        private var mProgressBarHandler : Handler? = null
 
         fun isMediaPlaying() = mMediaPlayer?.isPlaying
         var serviceStarted : Boolean = false
+        lateinit var customMusicListener: CustomMusicListener
     }
 
     override fun onBind(p0: Intent?): IBinder ?{
@@ -48,6 +52,9 @@ class PlayMusicService : Service() {
         // Creamos una instancia del audioManager.
         mAudioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
 
+        // Creamos una instancia del handler.
+        mProgressBarHandler = Handler()
+
     }
 
     override fun onDestroy() {
@@ -61,6 +68,8 @@ class PlayMusicService : Service() {
         mMediaPlayer = null
 
         mAudioManager = null
+
+        handleProgressBar(false)
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -142,18 +151,36 @@ class PlayMusicService : Service() {
 
         mMediaPlayer?.setOnPreparedListener {
             mMediaPlayer?.start()
+            handleProgressBar(isMediaPlaying()!!)
             Log.i("prepared: ", "playing song")
         }
 
         mMediaPlayer?.setOnCompletionListener {
             mMediaPlayer?.reset()
             var newpos = NextPosition(currentPos!!,1)
+            currentPos = newpos
             mMediaPlayer?.setDataSource(musicDataList[newpos])
             mMediaPlayer?.prepareAsync()
             Log.i("next song:", musicDataList[newpos])
+            customMusicListener.onSongFinished(newpos)
 
         }
 
+    }
+
+    private fun handleProgressBar(is_playing : Boolean){
+        if(is_playing){
+            mProgressBarHandler!!.post(object: Runnable{
+                override fun run() {
+                    val current_progress = mMediaPlayer!!.currentPosition / 1000
+                    customMusicListener.onUpdateProgress(current_progress)
+                    mProgressBarHandler!!.removeCallbacks(null)
+                    mProgressBarHandler!!.postDelayed(this, 1000)
+                }
+            })
+        }else{
+            mProgressBarHandler!!.removeCallbacks(null)
+        }
     }
 
     private fun NextPosition(currentPosition : Int,nextPosition:Int) : Int {
@@ -168,6 +195,7 @@ class PlayMusicService : Service() {
         if(mMediaPlayer!!.isPlaying){
             seekPosition = mMediaPlayer!!.currentPosition
             mMediaPlayer!!.pause()
+            handleProgressBar(false)
         }
     }
 
@@ -175,6 +203,7 @@ class PlayMusicService : Service() {
         Log.i("mediaPlayer", "resumeMusic")
         mMediaPlayer!!.seekTo(seekPosition)
         mMediaPlayer!!.start()
+        handleProgressBar(true)
 
     }
 

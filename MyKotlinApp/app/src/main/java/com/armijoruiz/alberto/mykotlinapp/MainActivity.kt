@@ -19,6 +19,7 @@ import android.widget.SeekBar
 import android.widget.TextView
 import com.armijoruiz.alberto.mykotlinapp.Structures.Song
 import com.armijoruiz.alberto.mykotlinapp.adapters.MyAdapter
+import com.armijoruiz.alberto.mykotlinapp.interfaces.CustomMusicListener
 import com.armijoruiz.alberto.mykotlinapp.interfaces.CustomOnItemClickListener
 import com.armijoruiz.alberto.mykotlinapp.other.*
 import com.armijoruiz.alberto.mykotlinapp.services.PlayMusicService
@@ -28,10 +29,8 @@ import kotlinx.android.synthetic.main.activity_main.*
 import org.w3c.dom.Text
 import java.time.Duration
 
-class MainActivity : AppCompatActivity(), CustomOnItemClickListener
+class MainActivity : AppCompatActivity(), CustomOnItemClickListener, CustomMusicListener
 {
-
-
     var recyclerView:RecyclerView?= null
     val mLayoutManager = LinearLayoutManager(this)
     var mAdapter: MyAdapter?=null
@@ -63,6 +62,8 @@ class MainActivity : AppCompatActivity(), CustomOnItemClickListener
         // Pedimos permiso al usuario para acceder a la espacio del dispositivo.
         setupPermissions()
 
+        PlayMusicService.customMusicListener = this
+
         // Obtenemos los botones y elementos de la pantalla.
         playcardbutton = findViewById(R.id.playcardButton)
         playbutton = findViewById(R.id.playButton)
@@ -73,6 +74,7 @@ class MainActivity : AppCompatActivity(), CustomOnItemClickListener
         seekBar = findViewById(R.id.seekBar)
         maxDuration = findViewById(R.id.totalDuration)
         currentDuration = findViewById(R.id.currentDuration)
+
 
         // Agregamos onClickListener.
         setupButtons()
@@ -170,6 +172,19 @@ class MainActivity : AppCompatActivity(), CustomOnItemClickListener
 
         setSeekBarParams(music_info[currentPosition].duration)
 
+    }
+
+    // función para actualizar el estado de la barra y el tiempo actual
+    override fun onUpdateProgress(progress: Int) {
+        seekBar?.progress = progress
+        currentDuration?.text = MyAdapter.getFormattedTime(progress/60,progress%60)
+    }
+
+    // función para cambiar el nombre de la canción y la información de esta.
+    override fun onSongFinished(song_index : Int) {
+        currentPosition = song_index
+        currentListening?.text = music_info[currentPosition].name
+        setSeekBarParams(music_info[currentPosition].duration)
     }
 
     // Función para establecer los parámetros del seekbar.
