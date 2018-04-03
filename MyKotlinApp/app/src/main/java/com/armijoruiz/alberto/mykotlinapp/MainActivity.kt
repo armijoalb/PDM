@@ -88,6 +88,7 @@ class MainActivity : AppCompatActivity(), CustomOnItemClickListener, CustomMusic
         Log.i("on_resume", "set on resume")
         currentPosition = Config.current_position
         currentListening?.text = music_info[currentPosition].name
+        changePlayIcons()
     }
 
     override fun onPause() {
@@ -180,6 +181,7 @@ class MainActivity : AppCompatActivity(), CustomOnItemClickListener, CustomMusic
                 // Obtenemos el progreso actual.
                 Log.i("seekBar", "new progress"+ seekbar.progress)
                 var act_progress:Int = seekbar.progress
+                changePlayIcons()
                 createMusicIntent(SET_PROGRESS,currentPosition,act_progress)
             }
         })

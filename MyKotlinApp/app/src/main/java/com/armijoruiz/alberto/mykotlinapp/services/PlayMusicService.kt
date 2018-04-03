@@ -1,15 +1,20 @@
 package com.armijoruiz.alberto.mykotlinapp.services
 
-import android.app.Service
+import android.app.*
 import android.content.Context
 import android.content.Intent
+import android.graphics.BitmapFactory
 import android.media.AudioManager
 import android.media.MediaPlayer
+import android.os.Build
 import android.os.Handler
 import android.os.IBinder
 import android.provider.MediaStore
+import android.support.v4.app.NotificationCompat
 import android.util.Log
 import com.armijoruiz.alberto.mykotlinapp.MainActivity
+import com.armijoruiz.alberto.mykotlinapp.R
+import com.armijoruiz.alberto.mykotlinapp.Structures.Song
 import com.armijoruiz.alberto.mykotlinapp.adapters.MyAdapter
 import com.armijoruiz.alberto.mykotlinapp.interfaces.CustomMusicListener
 import com.armijoruiz.alberto.mykotlinapp.other.*
@@ -26,13 +31,15 @@ class PlayMusicService : Service() {
     companion object {
 
         private var currentPos:Int? = null
-        private var musicDataList:ArrayList<String> = ArrayList()
+        private var musicDataList:ArrayList<Song> = ArrayList()
         private var mMediaPlayer:MediaPlayer? = null
         private var seekPosition : Int =  0
         private var mAudioManager: AudioManager? = null
         private var mProgressBarHandler : Handler? = null
+        private var CHANNEL_ID = "music_service_channel"
 
         fun isMediaPlaying() = mMediaPlayer?.isPlaying
+        fun isOreoOrHigher() = Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
         var serviceStarted : Boolean = false
         lateinit var customMusicListener: CustomMusicListener
     }
@@ -45,7 +52,7 @@ class PlayMusicService : Service() {
         super.onCreate()
 
         // Buscamos la música.
-        getMusic()
+        musicDataList = getMusic()
 
         serviceStarted = true
 
@@ -60,6 +67,19 @@ class PlayMusicService : Service() {
     override fun onDestroy() {
         super.onDestroy()
 
+        musicDataList.clear()
+        musicDataList = ArrayList()
+
+        mMediaPlayer?.stop()
+        mMediaPlayer?.release()
+        mMediaPlayer = null
+
+        mAudioManager = null
+
+        handleProgressBar(false)
+    }
+
+    private fun destroyPlayingService(){
         musicDataList.clear()
         musicDataList = ArrayList()
 
@@ -114,30 +134,38 @@ class PlayMusicService : Service() {
         return super.onStartCommand(intent, flags, startId)
     }
 
-    private fun getMusic(){
+    private fun getMusic():ArrayList<Song>{
+        val canciones = ArrayList<Song>()
 
         val contentResolver = contentResolver
         val songUri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI
         val songCursor = contentResolver.query(songUri, null, null, null,null)
 
         if(songCursor != null && songCursor.moveToFirst()){
+            val songTitle_id = songCursor.getColumnIndex(MediaStore.Audio.Media.TITLE)
+            val songArtist_id = songCursor.getColumnIndex(MediaStore.Audio.Media.ARTIST)
             val songPath_id = songCursor.getColumnIndex(MediaStore.Audio.Media.DATA)
-            val dura_id = songCursor.getColumnIndex(MediaStore.Audio.Media.DURATION)
-            var songPath : String
+            val dur_id = songCursor.getColumnIndex(MediaStore.Audio.Media.DURATION)
             var duration : Int
+            var songTitle : String
+            var songArtist : String
+            var songPath : String
 
 
             do {
-
+                duration = songCursor.getInt(dur_id) / 1000 // MediaStore.Audio.Media.Duration da los valores en ms.
+                songTitle = songCursor.getString(songTitle_id)
+                songArtist = songCursor.getString(songArtist_id)
                 songPath = songCursor.getString(songPath_id)
-                duration = songCursor.getInt(dura_id) / 1000
 
+                // Solo metemos aquellas "canciones" que sean más de 30 segs, para evitar mostrar tonos.
                 if(duration > 30)
-                    musicDataList.add(songPath)
+                    canciones.add(Song(songArtist, songTitle, songPath, duration))
 
             }while(songCursor.moveToNext())
         }
 
+        return canciones
     }
 
     private fun setupMediaPlayer(){
@@ -152,6 +180,8 @@ class PlayMusicService : Service() {
         mMediaPlayer?.setOnPreparedListener {
             mMediaPlayer?.start()
             handleProgressBar(isMediaPlaying()!!)
+            Log.i("prepared","setting up notification")
+            setupNotification()
             Log.i("prepared: ", "playing song")
         }
 
@@ -159,13 +189,86 @@ class PlayMusicService : Service() {
             mMediaPlayer?.reset()
             var newpos = NextPosition(currentPos!!,1)
             currentPos = newpos
-            mMediaPlayer?.setDataSource(musicDataList[newpos])
+            mMediaPlayer?.setDataSource(musicDataList[newpos].path)
             mMediaPlayer?.prepareAsync()
-            Log.i("next song:", musicDataList[newpos])
+            Log.i("next song:", musicDataList[newpos].name)
             customMusicListener.onSongFinished(newpos)
+            setupNotification()
 
         }
 
+    }
+
+
+    private fun setupNotification(){
+
+        val author = musicDataList[currentPos!!].author
+        val song_name = musicDataList[currentPos!!].name
+        val playPauseButton = 1
+        val nextButton = 2
+        val playPauseIcon = if(isMediaPlaying()!!) R.drawable.ic_pause else R.drawable.ic_play
+
+
+        var showWhen = false
+        var ongoing = false
+        var usesChrono = false
+
+        if(isMediaPlaying()!!){
+            Log.i("setupNotification", "is playing")
+            showWhen = true
+            ongoing = true
+            usesChrono = true
+        }
+
+        if(isOreoOrHigher()){
+            Log.i("setupNotification", "is oreo")
+            val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            val name = resources.getString(R.string.app_name)
+            val importance = NotificationManager.IMPORTANCE_LOW
+            NotificationChannel(CHANNEL_ID, name, importance).apply {
+                enableLights(false)
+                enableVibration(false)
+                notificationManager.createNotificationChannel(this)
+            }
+        }
+
+        val notification = NotificationCompat.Builder(this, CHANNEL_ID)
+                .setStyle(android.support.v4.media.app.NotificationCompat.MediaStyle()
+                        .setShowActionsInCompactView(playPauseButton,nextButton))
+                .setSmallIcon(R.drawable.ic_notification)
+                .setContentTitle(song_name)
+                .setContentText(author)
+                .setVisibility(Notification.VISIBILITY_PUBLIC)
+                .setShowWhen(isMediaPlaying()!!)
+                .setContentIntent(getContentIntent())
+                .setOngoing(isMediaPlaying()!!)
+                .setLargeIcon(BitmapFactory.decodeResource(resources,R.drawable.ic_notification))
+                .addAction(R.drawable.ic_prev,"PREV",getActionIntent(PREV) )
+                .addAction(playPauseIcon, "PLAYPAUSE", getActionIntent(PLAYPAUSE))
+                .addAction(R.drawable.ic_next, "NEXT", getActionIntent(NEXT))
+
+
+        Log.i("setupNotification", "starting notification")
+        startForeground(72,notification.build())
+        Log.i("setupNofication", "started")
+
+        if(!isMediaPlaying()!!){
+            Log.i("setupNotification", "media is no playing")
+            Handler().postDelayed({stopForeground(false)},500)
+        }
+
+
+    }
+
+    private fun getActionIntent(action:String):PendingIntent{
+        val intent: Intent = Intent(this,PlayMusicService::class.java)
+        Log.i("getActionIntent",action)
+        return PendingIntent.getBroadcast(applicationContext,0,intent,0)
+    }
+
+    private fun getContentIntent():PendingIntent{
+        val contentIntent = Intent(this,MainActivity::class.java)
+        return PendingIntent.getActivity(this,0,contentIntent,0)
     }
 
     private fun handleProgressBar(is_playing : Boolean){
@@ -198,6 +301,7 @@ class PlayMusicService : Service() {
             seekPosition = mMediaPlayer!!.currentPosition
             mMediaPlayer!!.pause()
             handleProgressBar(false)
+            setupNotification()
         }
     }
 
@@ -206,6 +310,7 @@ class PlayMusicService : Service() {
         mMediaPlayer!!.seekTo(seekPosition)
         mMediaPlayer!!.start()
         handleProgressBar(true)
+        setupNotification()
 
     }
 
@@ -221,11 +326,11 @@ class PlayMusicService : Service() {
 
     private fun playMusic(pos:Int){
         Log.i("playMusic:", "attemping to play a song")
-        Log.i("playMusic:", musicDataList[pos])
+        Log.i("playMusic:", musicDataList[pos].name)
         setupMediaPlayer()
         mMediaPlayer?.reset()
-        mMediaPlayer!!.setDataSource(musicDataList[pos])
-        Log.i("data source:", musicDataList[pos])
+        mMediaPlayer!!.setDataSource(musicDataList[pos].path)
+        Log.i("data source:", musicDataList[pos].path)
         mMediaPlayer!!.prepare()
         currentPos = pos
 

@@ -25,6 +25,7 @@
                 <action android:name="com.armijoruiz.alberto.mykotlinapp.action.NEXT" />
                 <action android:name="com.armijoruiz.alberto.mykotlinapp.action.PREV" />
                 <action android:name="com.armijoruiz.alberto.mykotlinapp.action.SET_PROGRESS" />
+                <action android:name="com.armijoruiz.alberto.mykotlinapp.action.FINISH" />
             </intent-filter>
         </service>
     </application>
