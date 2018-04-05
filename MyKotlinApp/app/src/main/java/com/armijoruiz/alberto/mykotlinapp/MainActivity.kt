@@ -84,6 +84,8 @@ class MainActivity : AppCompatActivity(), CustomOnItemClickListener, CustomMusic
 
         if(PlayMusicService.serviceStarted)
             createMusicIntent(FINISH,currentPosition)
+
+        stopService(Intent(this,PlayMusicService::class.java))
     }
 
     override fun onResume() {
@@ -250,7 +252,7 @@ class MainActivity : AppCompatActivity(), CustomOnItemClickListener, CustomMusic
 
         musicIntent.putExtra(MyAdapter.MUSICITEMPOS,position)
         musicIntent.putExtra(PROGRESS, seek_pos)
-        ContextCompat.startForegroundService(this,musicIntent)
+        startService(musicIntent)
     }
 
     private fun changePlayIcons(){

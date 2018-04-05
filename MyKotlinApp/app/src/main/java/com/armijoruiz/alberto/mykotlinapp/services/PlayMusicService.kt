@@ -17,6 +17,7 @@ import android.os.Handler
 import android.os.IBinder
 import android.provider.MediaStore
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.content.ContextCompat
 import android.util.Log
 import com.armijoruiz.alberto.mykotlinapp.MainActivity
 import com.armijoruiz.alberto.mykotlinapp.R
@@ -45,6 +46,7 @@ class PlayMusicService : Service() {
         private var mProgressBarHandler : Handler? = null
         private var CHANNEL_ID = "music_service_channel"
         private var NOTIFICATION_ID = 72
+        private lateinit var notificationManager : NotificationManager
 
 
         fun isMediaPlaying() = mMediaPlayer?.isPlaying
@@ -71,6 +73,8 @@ class PlayMusicService : Service() {
         // Creamos una instancia del handler.
         mProgressBarHandler = Handler()
 
+        notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+
     }
 
     override fun onDestroy() {
@@ -86,6 +90,7 @@ class PlayMusicService : Service() {
         musicDataList?.clear()
         musicDataList = null
 
+        mMediaPlayer?.stop()
         mMediaPlayer?.reset()
         mMediaPlayer?.release()
         mMediaPlayer = null
@@ -94,7 +99,8 @@ class PlayMusicService : Service() {
 
         handleProgressBar(false)
 
-        stopForeground(true)
+        notificationManager.cancel(NOTIFICATION_ID)
+
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -218,10 +224,10 @@ class PlayMusicService : Service() {
         val song_name = musicDataList!![currentPos!!].name
         val playPauseIcon = if(isMediaPlaying()!!) R.drawable.ic_pause else R.drawable.ic_play
 
+
         // Necesario para que se muestren notificaciones a partir de android oreo o superior.
         if(isOreoOrHigher()){
             Log.i("setupNotification", "is oreo")
-            val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
             val name = resources.getString(R.string.app_name)
             val importance = NotificationManager.IMPORTANCE_LOW
             NotificationChannel(CHANNEL_ID, name, importance).apply {
@@ -236,6 +242,7 @@ class PlayMusicService : Service() {
         var mPendingIntent = PendingIntent.getActivity(applicationContext,0,intent,0)
         val notification = NotificationCompat.Builder(this, CHANNEL_ID)
                 .setStyle(android.support.v4.media.app.NotificationCompat.MediaStyle()
+                        .setShowActionsInCompactView(0,1,2)
                 )
                 .setSmallIcon(R.drawable.ic_notification)
                 .setContentTitle(song_name)
@@ -250,11 +257,16 @@ class PlayMusicService : Service() {
                 .addAction(R.drawable.ic_prev,"PREVIOUS", getActionIntent(PREV) ) // 0
                 .addAction(playPauseIcon, "PLAYPAUSE", getActionIntent(PLAYPAUSE)) // 1
                 .addAction(R.drawable.ic_next, "NEXT", getActionIntent(NEXT)) // 2
-                .build()
+                .setColor(ContextCompat.getColor(applicationContext,R.color.colorAccent))
+
+        if(isOreoOrHigher()){
+            notification.setColorized(true)
+        }
+
 
 
         Log.i("setupNotification", "starting notification")
-        startForeground(NOTIFICATION_ID,notification)
+        notificationManager.notify(NOTIFICATION_ID,notification.build())
         Log.i("setupNofication", "started")
 
 
@@ -338,3 +350,4 @@ class PlayMusicService : Service() {
         customMusicListener.onSongFinished(currentPos!!)
     }
 }
+

@@ -22,7 +22,7 @@ class NotificationControlsListener : BroadcastReceiver() {
         if(context != null){
             Log.i("NotControlsListener", "sending action: "+action)
             when(action){
-                PLAYPAUSE,NEXT, PREV -> ContextCompat.startForegroundService(context,intent)
+                PLAYPAUSE,NEXT, PREV -> context.startService(intent)
             }
         }else{
             Log.i("NotControlsListener", "bad context")
