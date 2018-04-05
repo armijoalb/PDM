@@ -1,5 +1,12 @@
 package com.armijoruiz.alberto.mykotlinapp.services
 
+/**
+ * Para la elaboración de este servicio y algunas clases relacionadas se ha tomado como ejemplo
+ * este Github: @see <a href="https://github.com/SimpleMobileTools/Simple-Music-Player">
+ *     https://github.com/SimpleMobileTools/Simple-Music-Player</a>
+ */
+
+
 import android.app.*
 import android.content.Context
 import android.content.Intent
@@ -294,6 +301,7 @@ class PlayMusicService : Service() {
             seekPosition = mMediaPlayer!!.currentPosition
             mMediaPlayer!!.pause()
             handleProgressBar(false)
+            customMusicListener.onSongStateChanged(false)
             setupNotification()
         }
     }
@@ -303,6 +311,7 @@ class PlayMusicService : Service() {
         mMediaPlayer!!.seekTo(seekPosition)
         mMediaPlayer!!.start()
         handleProgressBar(true)
+        customMusicListener.onSongStateChanged(true)
         setupNotification()
 
     }
@@ -325,6 +334,7 @@ class PlayMusicService : Service() {
         Log.i("data source:", musicDataList!![pos].path)
         mMediaPlayer!!.prepare()
         currentPos = pos
-
+        customMusicListener.onSongStateChanged(true)
+        customMusicListener.onSongFinished(currentPos!!)
     }
 }

@@ -162,8 +162,6 @@ class MainActivity : AppCompatActivity(), CustomOnItemClickListener, CustomMusic
         nextButton?.setOnClickListener {
             Log.i("play_pause: ", "play_next llamado")
             currentPosition = NextPosition(currentPosition,1)
-            playing_music = true
-            changePlayIcons()
             Log.i("nextButton:", "next_position: " + currentPosition )
             currentListening?.setText(music_info[currentPosition].name)
             setSeekBarParams(music_info[currentPosition].duration)
@@ -174,8 +172,6 @@ class MainActivity : AppCompatActivity(), CustomOnItemClickListener, CustomMusic
         prevButton?.setOnClickListener {
             Log.i("play_pause: ", "play_prev llamado")
             currentPosition = NextPosition(currentPosition,-1)
-            playing_music = true
-            changePlayIcons()
             Log.i("prevButton:", "next_position: " + currentPosition )
             currentListening?.setText(music_info[currentPosition].name)
             setSeekBarParams(music_info[currentPosition].duration)
@@ -216,6 +212,11 @@ class MainActivity : AppCompatActivity(), CustomOnItemClickListener, CustomMusic
         currentListening?.text = music_info[currentPosition].name
         setSeekBarParams(music_info[currentPosition].duration)
         Config.current_position = currentPosition
+    }
+
+    override fun onSongStateChanged(song_changed:Boolean) {
+        playing_music = song_changed
+        changePlayIcons()
     }
 
     // Función para establecer los parámetros del seekbar.
@@ -269,8 +270,6 @@ class MainActivity : AppCompatActivity(), CustomOnItemClickListener, CustomMusic
     // Implementación de la interfaz para onClickItem del RecyclerView.
     override fun onItemClick(position: Int) {
         currentPosition = position
-        playing_music = true
-        changePlayIcons()
         currentListening?.setText(music_info[position].name)
         setSeekBarParams(music_info[currentPosition].duration)
         createMusicIntent(PLAYSONG,position)
