@@ -84,6 +84,8 @@ class   MainActivity : AppCompatActivity(), CustomOnItemClickListener, CustomMus
 
         if(PlayMusicService.serviceStarted)
             createMusicIntent(FINISH,currentPosition)
+
+        stopService(Intent(this,PlayMusicService::class.java))
     }
 
     override fun onResume() {
@@ -162,8 +164,6 @@ class   MainActivity : AppCompatActivity(), CustomOnItemClickListener, CustomMus
         nextButton?.setOnClickListener {
             Log.i("play_pause: ", "play_next llamado")
             currentPosition = NextPosition(currentPosition,1)
-            playing_music = true
-            changePlayIcons()
             Log.i("nextButton:", "next_position: " + currentPosition )
             currentListening?.setText(music_info[currentPosition].name)
             setSeekBarParams(music_info[currentPosition].duration)
@@ -174,8 +174,6 @@ class   MainActivity : AppCompatActivity(), CustomOnItemClickListener, CustomMus
         prevButton?.setOnClickListener {
             Log.i("play_pause: ", "play_prev llamado")
             currentPosition = NextPosition(currentPosition,-1)
-            playing_music = true
-            changePlayIcons()
             Log.i("prevButton:", "next_position: " + currentPosition )
             currentListening?.setText(music_info[currentPosition].name)
             setSeekBarParams(music_info[currentPosition].duration)
@@ -218,6 +216,11 @@ class   MainActivity : AppCompatActivity(), CustomOnItemClickListener, CustomMus
         Config.current_position = currentPosition
     }
 
+    override fun onSongStateChanged(song_changed:Boolean) {
+        playing_music = song_changed
+        changePlayIcons()
+    }
+
     // Función para establecer los parámetros del seekbar.
     private fun setSeekBarParams(max : Int, current: Int = 0){
         seekBar?.progress = current
@@ -249,7 +252,7 @@ class   MainActivity : AppCompatActivity(), CustomOnItemClickListener, CustomMus
 
         musicIntent.putExtra(MyAdapter.MUSICITEMPOS,position)
         musicIntent.putExtra(PROGRESS, seek_pos)
-        ContextCompat.startForegroundService(this,musicIntent)
+        startService(musicIntent)
     }
 
     private fun changePlayIcons(){
@@ -269,8 +272,6 @@ class   MainActivity : AppCompatActivity(), CustomOnItemClickListener, CustomMus
     // Implementación de la interfaz para onClickItem del RecyclerView.
     override fun onItemClick(position: Int) {
         currentPosition = position
-        playing_music = true
-        changePlayIcons()
         currentListening?.setText(music_info[position].name)
         setSeekBarParams(music_info[currentPosition].duration)
         createMusicIntent(PLAYSONG,position)
