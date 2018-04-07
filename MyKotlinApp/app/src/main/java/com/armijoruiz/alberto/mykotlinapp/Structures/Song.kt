@@ -1,4 +1,4 @@
-package com.armijoruiz.alberto.mykotlinapp.Structures
+package com.armijoruiz.alberto.mykotlinapp.structures
 
 
 /**

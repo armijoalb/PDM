@@ -13,7 +13,7 @@ import android.support.v4.app.NotificationCompat;
 import android.util.Log
 import com.armijoruiz.alberto.mykotlinapp.MainActivity
 import com.armijoruiz.alberto.mykotlinapp.R
-import com.armijoruiz.alberto.mykotlinapp.Structures.Song
+import com.armijoruiz.alberto.mykotlinapp.structures.Song
 import com.armijoruiz.alberto.mykotlinapp.adapters.MyAdapter
 import com.armijoruiz.alberto.mykotlinapp.interfaces.CustomMusicListener
 import com.armijoruiz.alberto.mykotlinapp.other.*
@@ -249,8 +249,6 @@ class PlayMusicService : Service() {
         Log.i("setupNotification", "starting notification")
         startForeground(NOTIFICATION_ID,notification)
         Log.i("setupNofication", "started")
-
-
     }
 
     private fun getActionIntent(action:String):PendingIntent{

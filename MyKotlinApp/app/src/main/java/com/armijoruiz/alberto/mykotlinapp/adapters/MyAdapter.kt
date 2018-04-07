@@ -7,14 +7,14 @@ import android.view.View
 import android.view.ViewGroup
 import com.armijoruiz.alberto.mykotlinapp.R
 import com.armijoruiz.alberto.mykotlinapp.interfaces.CustomOnItemClickListener
-import com.armijoruiz.alberto.mykotlinapp.Structures.Song
+import com.armijoruiz.alberto.mykotlinapp.structures.Song
 import kotlinx.android.synthetic.main.layout_holder.view.*
 
 /**
  * Created by Alberto on 06/03/2018.
  */
 
-class MyAdapter(context : Context, songs: ArrayList<Song>, val itemlistener : CustomOnItemClickListener) : RecyclerView.Adapter<MyAdapter.ViewHolder>(){
+class  MyAdapter(context : Context, songs: ArrayList<Song>, val itemlistener : CustomOnItemClickListener) : RecyclerView.Adapter<MyAdapter.ViewHolder>(){
     val mContext = context
     val canciones = songs
 

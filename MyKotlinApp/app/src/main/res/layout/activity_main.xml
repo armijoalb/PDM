@@ -17,7 +17,7 @@
         sothree:layout_constraintTop_toTopOf="parent"
         sothree:umanoDragView="@id/music_layout"
         sothree:umanoOverlay="true"
-        sothree:umanoPanelHeight="@android:dimen/notification_large_icon_height"
+        sothree:umanoPanelHeight="?attr/actionBarSize"
         sothree:umanoShadowHeight="20dp">
 
         <!-- MAIN CONTENT -->

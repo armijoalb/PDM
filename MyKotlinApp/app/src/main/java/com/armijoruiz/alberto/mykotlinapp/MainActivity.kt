@@ -16,7 +16,7 @@ import android.view.View
 import android.widget.ImageButton
 import android.widget.SeekBar
 import android.widget.TextView
-import com.armijoruiz.alberto.mykotlinapp.Structures.Song
+import com.armijoruiz.alberto.mykotlinapp.structures.Song
 import com.armijoruiz.alberto.mykotlinapp.adapters.MyAdapter
 import com.armijoruiz.alberto.mykotlinapp.interfaces.CustomMusicListener
 import com.armijoruiz.alberto.mykotlinapp.interfaces.CustomOnItemClickListener
@@ -25,7 +25,7 @@ import com.armijoruiz.alberto.mykotlinapp.services.PlayMusicService
 import com.sothree.slidinguppanel.SlidingUpPanelLayout
 import com.sothree.slidinguppanel.SlidingUpPanelLayout.PanelState
 
-class MainActivity : AppCompatActivity(), CustomOnItemClickListener, CustomMusicListener
+class   MainActivity : AppCompatActivity(), CustomOnItemClickListener, CustomMusicListener
 {
     var recyclerView:RecyclerView?= null
     val mLayoutManager = LinearLayoutManager(this)
