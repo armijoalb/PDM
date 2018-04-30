@@ -99,7 +99,7 @@ class PlayMusicService : Service() {
 
         handleProgressBar(false)
 
-        notificationManager.cancel(NOTIFICATION_ID)
+        stopForeground(true);
 
     }
 
@@ -268,9 +268,8 @@ class PlayMusicService : Service() {
         Log.i("setupNotification", "starting notification")
         startForeground(NOTIFICATION_ID, notification.build())
 
-        if (!isMediaPlaying()!!) {
-            Handler().postDelayed({ stopForeground(false) }, 500)
-        }
+
+
         Log.i("setupNofication", "started")
     }
 

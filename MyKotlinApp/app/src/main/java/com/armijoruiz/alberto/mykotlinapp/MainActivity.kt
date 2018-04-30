@@ -220,6 +220,7 @@ class   MainActivity : AppCompatActivity(), CustomOnItemClickListener, CustomMus
 
     override fun onSongStateChanged(song_changed:Boolean) {
         playing_music = song_changed
+        Config.is_media_playing = song_changed
         changePlayIcons()
     }
 
