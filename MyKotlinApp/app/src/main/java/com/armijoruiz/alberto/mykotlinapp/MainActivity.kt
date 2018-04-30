@@ -96,6 +96,8 @@ class   MainActivity : AppCompatActivity(), CustomOnItemClickListener, CustomMus
             currentListening?.text = music_info[currentPosition].name
         playing_music = Config.is_media_playing
         changePlayIcons()
+
+        mAdapter?.updateList(getMusic())
     }
 
     override fun onPause() {
