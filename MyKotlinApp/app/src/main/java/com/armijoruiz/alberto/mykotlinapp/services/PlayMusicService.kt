@@ -238,8 +238,8 @@ class PlayMusicService : Service() {
             }
         }
 
-        var intent = Intent(this,MainActivity::class.java)
-        var mPendingIntent = PendingIntent.getActivity(applicationContext,0,intent,0)
+
+
         val notification = NotificationCompat.Builder(this, CHANNEL_ID)
                 .setStyle(android.support.v4.media.app.NotificationCompat.MediaStyle()
                         .setShowActionsInCompactView(0,1,2)
@@ -266,7 +266,11 @@ class PlayMusicService : Service() {
 
 
         Log.i("setupNotification", "starting notification")
-        notificationManager.notify(NOTIFICATION_ID,notification.build())
+        startForeground(NOTIFICATION_ID, notification.build())
+
+        if (!isMediaPlaying()!!) {
+            Handler().postDelayed({ stopForeground(false) }, 500)
+        }
         Log.i("setupNofication", "started")
     }
 
