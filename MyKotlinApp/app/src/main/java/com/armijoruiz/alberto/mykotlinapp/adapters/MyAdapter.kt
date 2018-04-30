@@ -16,7 +16,7 @@ import kotlinx.android.synthetic.main.layout_holder.view.*
 
 class  MyAdapter(context : Context, songs: ArrayList<Song>, val itemlistener : CustomOnItemClickListener) : RecyclerView.Adapter<MyAdapter.ViewHolder>(){
     val mContext = context
-    val canciones = songs
+    var canciones = songs
 
     var listener : CustomOnItemClickListener? = null
 
@@ -60,6 +60,11 @@ class  MyAdapter(context : Context, songs: ArrayList<Song>, val itemlistener : C
             }
         })
 
+    }
+
+    fun updateList(list:ArrayList<Song>){
+        canciones = list
+        notifyDataSetChanged()
     }
 }
 
