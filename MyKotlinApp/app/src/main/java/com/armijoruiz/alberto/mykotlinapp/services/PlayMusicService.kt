@@ -19,7 +19,7 @@ import android.provider.MediaStore
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.ContextCompat
 import android.util.Log
-import com.armijoruiz.alberto.mykotlinapp.MainActivity
+import com.armijoruiz.alberto.mykotlinapp.fragments.MusicFragment
 import com.armijoruiz.alberto.mykotlinapp.R
 import com.armijoruiz.alberto.mykotlinapp.structures.Song
 import com.armijoruiz.alberto.mykotlinapp.adapters.MyAdapter
@@ -137,7 +137,7 @@ class PlayMusicService : Service() {
                 playPrev()
             }
             SET_PROGRESS ->{
-                seekPosition = intent.getIntExtra(MainActivity.PROGRESS,0) * 1000
+                seekPosition = intent.getIntExtra(MusicFragment.PROGRESS,0) * 1000
                 resumeMusic()
             }
             FINISH ->{
@@ -178,7 +178,7 @@ class PlayMusicService : Service() {
 
                 // Solo metemos aquellas "canciones" que sean más de 30 segs, para evitar mostrar tonos.
                 if(duration > 30)
-                    canciones.add(Song(songArtist, songTitle, songPath, duration))
+                    canciones.add(Song(songArtist, songTitle, songPath, duration,0))
 
             }while(songCursor.moveToNext())
         }
@@ -280,7 +280,7 @@ class PlayMusicService : Service() {
     }
 
     private fun getContentIntent():PendingIntent{
-        val contentIntent = Intent(this,MainActivity::class.java)
+        val contentIntent = Intent(this, MusicFragment::class.java)
         return PendingIntent.getActivity(this,0,contentIntent,0)
     }
 

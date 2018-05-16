@@ -4,41 +4,17 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.armijoruiz.alberto.mykotlinapp.MainActivity">
+    tools:context="com.armijoruiz.alberto.mykotlinapp.fragments.MusicFragment">
 
-    <com.sothree.slidinguppanel.SlidingUpPanelLayout xmlns:sothree="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/sliding_panel"
-        android:layout_width="match_parent"
+
+    <!-- MAIN CONTENT -->
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/mRecyclerView"
         android:layout_height="match_parent"
-        android:gravity="bottom"
-        sothree:layout_constraintBottom_toBottomOf="parent"
-        sothree:layout_constraintEnd_toEndOf="parent"
-        sothree:layout_constraintStart_toStartOf="parent"
-        sothree:layout_constraintTop_toTopOf="parent"
-        sothree:umanoDragView="@id/music_layout"
-        sothree:umanoOverlay="true"
-        sothree:umanoPanelHeight="?attr/actionBarSize"
-        sothree:umanoShadowHeight="20dp">
+        android:layout_width="match_parent"
+        android:scrollbars="vertical"
+        tools:listitem="@layout/layout_holder"/>
 
-        <!-- MAIN CONTENT -->
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/mRecyclerView"
-            android:layout_height="match_parent"
-            android:layout_width="match_parent"
-            android:scrollbars="vertical"
-            tools:listitem="@layout/layout_holder"/>
-
-
-        <!-- SLIDING LAYOUT -->
-        <include
-            android:id="@+id/music_layout"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            layout="@layout/fragment_music"/>
-
-
-
-    </com.sothree.slidinguppanel.SlidingUpPanelLayout>
 
 
 

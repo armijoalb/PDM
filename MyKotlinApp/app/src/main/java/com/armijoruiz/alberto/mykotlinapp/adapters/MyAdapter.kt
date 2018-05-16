@@ -14,8 +14,7 @@ import kotlinx.android.synthetic.main.layout_holder.view.*
  * Created by Alberto on 06/03/2018.
  */
 
-class  MyAdapter(context : Context, songs: ArrayList<Song>, val itemlistener : CustomOnItemClickListener) : RecyclerView.Adapter<MyAdapter.ViewHolder>(){
-    val mContext = context
+class  MyAdapter( songs: ArrayList<Song>, val itemlistener : CustomOnItemClickListener) : RecyclerView.Adapter<MyAdapter.ViewHolder>(){
     var canciones = songs
 
     var listener : CustomOnItemClickListener? = null
