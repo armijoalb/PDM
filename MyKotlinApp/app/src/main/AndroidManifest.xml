@@ -3,6 +3,7 @@
     package="com.armijoruiz.alberto.mykotlinapp">
 
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
 
     <application
@@ -31,6 +32,8 @@
                 <action android:name="com.armijoruiz.alberto.mykotlinapp.action.PREV" />
                 <action android:name="com.armijoruiz.alberto.mykotlinapp.action.SET_PROGRESS" />
                 <action android:name="com.armijoruiz.alberto.mykotlinapp.action.FINISH" />
+                <action android:name="com.armijoruiz.alberto.mykotlinapp.action.ADD_FAB" />
+                <action android:name="com.armijoruiz.alberto.mykotlinapp.action.REM_FAB" />
             </intent-filter>
         </service>
 

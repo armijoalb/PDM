@@ -1,6 +1,5 @@
 package com.armijoruiz.alberto.mykotlinapp.adapters
 
-import android.content.Context
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
@@ -23,8 +22,6 @@ class  MyAdapter( songs: ArrayList<Song>, val itemlistener : CustomOnItemClickLi
         val MUSICITEMPOS = "MusicItemPos"
         fun getFormattedTime(min:Int,sec:Int) = String.format("%d:%02d",min,sec)
     }
-
-
 
     class ViewHolder(itemView:View) :RecyclerView.ViewHolder(itemView){
         var mView = itemView
@@ -64,6 +61,14 @@ class  MyAdapter( songs: ArrayList<Song>, val itemlistener : CustomOnItemClickLi
     fun updateList(list:ArrayList<Song>){
         canciones = list
         notifyDataSetChanged()
+    }
+
+    fun obtainPathList():ArrayList<String>{
+        var arr = ArrayList<String>()
+        for (cancion in canciones)
+            arr.add(cancion.path)
+
+        return arr
     }
 }
 

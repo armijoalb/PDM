@@ -61,11 +61,11 @@
         </android.support.design.widget.CoordinatorLayout>
 
         <!-- SLIDING CONTENT -->
-        <include
-            android:id="@+id/music_layout"
+        <FrameLayout
+            android:id="@+id/playerLayout"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            layout="@layout/fragment_music"/>
+            android:layout_height="match_parent">
+        </FrameLayout>
 
     </com.sothree.slidinguppanel.SlidingUpPanelLayout>
 

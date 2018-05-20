@@ -12,6 +12,7 @@ import android.content.Context
 import android.content.Intent
 import android.media.AudioManager
 import android.media.MediaPlayer
+import android.net.Uri
 import android.os.Build
 import android.os.Handler
 import android.os.IBinder
@@ -19,6 +20,7 @@ import android.provider.MediaStore
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.ContextCompat
 import android.util.Log
+import com.armijoruiz.alberto.mykotlinapp.MainActivity
 import com.armijoruiz.alberto.mykotlinapp.fragments.MusicFragment
 import com.armijoruiz.alberto.mykotlinapp.R
 import com.armijoruiz.alberto.mykotlinapp.structures.Song
@@ -34,6 +36,7 @@ import com.armijoruiz.alberto.mykotlinapp.receivers.NotificationControlsListener
  * Un Servicio es un tipo de clase que ejecuta una tarea de larga duración.
  */
 class PlayMusicService : Service() {
+    private val TAG = PlayMusicService::class.java.simpleName
 
 
     companion object {
@@ -47,12 +50,16 @@ class PlayMusicService : Service() {
         private var CHANNEL_ID = "music_service_channel"
         private var NOTIFICATION_ID = 72
         private lateinit var notificationManager : NotificationManager
+        private lateinit var uri_playlist : String
+        private var default_uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI.toString()
+        private var fab_list : ArrayList<String> = ArrayList()
 
 
         fun isMediaPlaying() = mMediaPlayer?.isPlaying
         fun isOreoOrHigher() = Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
         var serviceStarted : Boolean = false
         lateinit var customMusicListener: CustomMusicListener
+        fun isInFabList(name:String):Boolean = fab_list.contains(name)
     }
 
     override fun onBind(p0: Intent?): IBinder ?{
@@ -63,7 +70,7 @@ class PlayMusicService : Service() {
         super.onCreate()
 
         // Buscamos la música.
-        musicDataList = getMusic()
+        getFabList()
 
         serviceStarted = true
 
@@ -79,14 +86,10 @@ class PlayMusicService : Service() {
 
     override fun onDestroy() {
         super.onDestroy()
-
         destroyPlayingService()
-
     }
 
     private fun destroyPlayingService(){
-
-
         musicDataList?.clear()
         musicDataList = null
 
@@ -103,13 +106,43 @@ class PlayMusicService : Service() {
 
     }
 
-    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+    private fun getFabList(){
+        var uri : Uri = Uri.parse(MainActivity.fab_playlist)
+        val contentR = contentResolver
+        val cursor = contentR.query(uri,null, null, null, null)
 
+        if(cursor != null && cursor.moveToNext()){
+            do{
+                var track_id = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Playlists.Members.AUDIO_ID))
+                var uri_content = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI
+                var trackProjection = arrayOf( MediaStore.Audio.Media.TITLE)
+                var selection = MediaStore.Audio.Media._ID + "=?"
+                var selectionArgs = arrayOf(""+track_id)
+                var mediaCursor = contentR.query(uri_content,trackProjection,selection,selectionArgs,null)
+                if(mediaCursor != null){
+                    if(mediaCursor.count >= 0){
+                        mediaCursor.moveToFirst()
+                        var title = mediaCursor.getString(mediaCursor.getColumnIndex(MediaStore.Audio.Media.TITLE))
+                        fab_list.add(title)
+                    }
+                }
+            }while (cursor.moveToNext())
+        }
+
+        Log.i(TAG,"fab_playlist size: " + fab_list.size)
+
+    }
+
+    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
 
         Log.i("onStartCommand","Iniciando")
         when(intent!!.action){
             PLAYSONG -> {
                 // cogemos los datos que le hemos pasado al intent.
+                uri_playlist = intent.getStringExtra(MainActivity.default_uri_string)
+                if(uri_playlist.isEmpty())
+                    uri_playlist = default_uri
+                musicDataList = getMusic()
                 currentPos = intent.getIntExtra(MyAdapter.MUSICITEMPOS,0)
                 playMusic(currentPos!!)
             }
@@ -145,6 +178,18 @@ class PlayMusicService : Service() {
                 customMusicListener.onUpdateProgress(0)
                 destroyPlayingService()
             }
+            ADD_FAB->{
+                Log.i("onStartCommand", "adding to fab")
+                MainActivity.addToPlaylist(musicDataList!![currentPos!!].id.toInt(),applicationContext)
+                customMusicListener.onSongAddedToFab(true)
+                getFabList()
+            }
+            REM_FAB->{
+                Log.i("onStartCommand", "removing to fab")
+                MainActivity.removeFromPlaylist(musicDataList!![currentPos!!].id.toInt(),applicationContext)
+                customMusicListener.onSongAddedToFab(false)
+                getFabList()
+            }
             else-> Log.i("onStartCommand", "not reconised action")
         }
 
@@ -154,9 +199,10 @@ class PlayMusicService : Service() {
 
     private fun getMusic():ArrayList<Song>{
         val canciones = ArrayList<Song>()
-
+        Log.i(TAG,"taking music")
         val contentResolver = contentResolver
-        val songUri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI
+        //val songUri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI
+        val songUri = Uri.parse(uri_playlist)
         val songCursor = contentResolver.query(songUri, null, null, null,null)
 
         if(songCursor != null && songCursor.moveToFirst()){
@@ -164,10 +210,12 @@ class PlayMusicService : Service() {
             val songArtist_id = songCursor.getColumnIndex(MediaStore.Audio.Media.ARTIST)
             val songPath_id = songCursor.getColumnIndex(MediaStore.Audio.Media.DATA)
             val dur_id = songCursor.getColumnIndex(MediaStore.Audio.Media.DURATION)
+            val song_id = songCursor.getColumnIndex(MediaStore.Audio.Media._ID)
             var duration : Int
             var songTitle : String
             var songArtist : String
             var songPath : String
+            var audioID : Long
 
 
             do {
@@ -175,14 +223,15 @@ class PlayMusicService : Service() {
                 songTitle = songCursor.getString(songTitle_id)
                 songArtist = songCursor.getString(songArtist_id)
                 songPath = songCursor.getString(songPath_id)
+                audioID = songCursor.getLong(song_id)
 
                 // Solo metemos aquellas "canciones" que sean más de 30 segs, para evitar mostrar tonos.
                 if(duration > 30)
-                    canciones.add(Song(songArtist, songTitle, songPath, duration,0))
+                    canciones.add(Song(songArtist, songTitle, songPath, duration,audioID))
 
             }while(songCursor.moveToNext())
         }
-
+        Log.i(TAG,"finished "+ canciones.size)
         return canciones
     }
 
@@ -211,7 +260,7 @@ class PlayMusicService : Service() {
             mMediaPlayer?.setDataSource(musicDataList!![newpos].path)
             mMediaPlayer?.prepareAsync()
             Log.i("next song:", musicDataList!![newpos].name)
-            customMusicListener.onSongFinished(newpos)
+            customMusicListener.onSongFinished(newpos,musicDataList!![newpos].name, musicDataList!![newpos].duration)
             setupNotification()
         }
 
@@ -347,8 +396,10 @@ class PlayMusicService : Service() {
         Log.i("data source:", musicDataList!![pos].path)
         mMediaPlayer!!.prepare()
         currentPos = pos
+        Log.i("playMusic:","prepared")
         customMusicListener.onSongStateChanged(true)
-        customMusicListener.onSongFinished(currentPos!!)
+        customMusicListener.onSongFinished(currentPos!!,musicDataList!![currentPos!!].name, musicDataList!![currentPos!!].duration)
+        //customMusicListener.onSongAddedToFab(fab_list.contains(musicDataList!![currentPos!!].name))
     }
 }
 
