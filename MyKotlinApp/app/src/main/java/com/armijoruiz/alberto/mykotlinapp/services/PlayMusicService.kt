@@ -25,6 +25,7 @@ import com.armijoruiz.alberto.mykotlinapp.fragments.MusicFragment
 import com.armijoruiz.alberto.mykotlinapp.R
 import com.armijoruiz.alberto.mykotlinapp.structures.Song
 import com.armijoruiz.alberto.mykotlinapp.adapters.MyAdapter
+import com.armijoruiz.alberto.mykotlinapp.interfaces.CustomFabListener
 import com.armijoruiz.alberto.mykotlinapp.interfaces.CustomMusicListener
 import com.armijoruiz.alberto.mykotlinapp.other.*
 import com.armijoruiz.alberto.mykotlinapp.receivers.NotificationControlsListener
@@ -59,6 +60,7 @@ class PlayMusicService : Service() {
         fun isOreoOrHigher() = Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
         var serviceStarted : Boolean = false
         lateinit var customMusicListener: CustomMusicListener
+        lateinit var customFabListener: CustomFabListener
         fun isInFabList(name:String):Boolean = fab_list.contains(name)
     }
 
@@ -101,12 +103,11 @@ class PlayMusicService : Service() {
         mAudioManager = null
 
         handleProgressBar(false)
-
         stopForeground(true);
-
     }
 
     private fun getFabList(){
+        fab_list = ArrayList()
         var uri : Uri = Uri.parse(MainActivity.fab_playlist)
         val contentR = contentResolver
         val cursor = contentR.query(uri,null, null, null, null)
@@ -130,6 +131,7 @@ class PlayMusicService : Service() {
         }
 
         Log.i(TAG,"fab_playlist size: " + fab_list.size)
+        Log.i(TAG, fab_list.toString())
 
     }
 
@@ -182,12 +184,16 @@ class PlayMusicService : Service() {
                 Log.i("onStartCommand", "adding to fab")
                 MainActivity.addToPlaylist(musicDataList!![currentPos!!].id.toInt(),applicationContext)
                 customMusicListener.onSongAddedToFab(true)
+                customFabListener.onFabListChanged()
                 getFabList()
             }
             REM_FAB->{
                 Log.i("onStartCommand", "removing to fab")
-                MainActivity.removeFromPlaylist(musicDataList!![currentPos!!].id.toInt(),applicationContext)
+                MainActivity.removeFromPlaylist(
+                        MainActivity.getSongIdFromMediaStore(musicDataList!![currentPos!!].path,applicationContext).toInt(),
+                        applicationContext)
                 customMusicListener.onSongAddedToFab(false)
+                customFabListener.onFabListChanged()
                 getFabList()
             }
             else-> Log.i("onStartCommand", "not reconised action")
@@ -399,7 +405,9 @@ class PlayMusicService : Service() {
         Log.i("playMusic:","prepared")
         customMusicListener.onSongStateChanged(true)
         customMusicListener.onSongFinished(currentPos!!,musicDataList!![currentPos!!].name, musicDataList!![currentPos!!].duration)
-        //customMusicListener.onSongAddedToFab(fab_list.contains(musicDataList!![currentPos!!].name))
+        Log.i(TAG, fab_list.toString())
+        Log.i(TAG, musicDataList!![currentPos!!].name)
+        customMusicListener.onSongAddedToFab(fab_list.contains(musicDataList!![currentPos!!].name))
     }
 }
 

@@ -13,9 +13,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.armijoruiz.alberto.mykotlinapp.MainActivity
-
 import com.armijoruiz.alberto.mykotlinapp.R
 import com.armijoruiz.alberto.mykotlinapp.adapters.MyAdapter
+import com.armijoruiz.alberto.mykotlinapp.interfaces.CustomFabListener
+import com.armijoruiz.alberto.mykotlinapp.interfaces.CustomMusicListener
 import com.armijoruiz.alberto.mykotlinapp.interfaces.CustomOnItemClickListener
 import com.armijoruiz.alberto.mykotlinapp.other.PLAYSONG
 import com.armijoruiz.alberto.mykotlinapp.services.PlayMusicService
@@ -28,7 +29,7 @@ import com.armijoruiz.alberto.mykotlinapp.structures.Song
  * create an instance of this fragment.
  *
  */
-class FabFragment : Fragment(), CustomOnItemClickListener {
+class FabFragment : Fragment(), CustomOnItemClickListener, CustomFabListener {
 
 
     private var path: String? = null
@@ -37,6 +38,18 @@ class FabFragment : Fragment(), CustomOnItemClickListener {
     private lateinit var adapter:MyAdapter
     private lateinit var recycler: RecyclerView
 
+
+    companion object {
+
+        @JvmStatic
+        fun newInstance(param1: String) =
+                FabFragment().apply {
+                    arguments = Bundle().apply {
+                        putString("PATH", param1)
+                    }
+                }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
@@ -44,11 +57,17 @@ class FabFragment : Fragment(), CustomOnItemClickListener {
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        updateList()
+    }
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
-        // Inflate the layout for this fragment
 
+        // Inflate the layout for this fragment
         var mView :View = inflater.inflate(R.layout.fragment_fab, container, false)
+        PlayMusicService.customFabListener = this
         Log.i(TAG,"onCreateView")
         getFabList()
         recycler = mView.findViewById(R.id.fab_recycler)
@@ -60,7 +79,13 @@ class FabFragment : Fragment(), CustomOnItemClickListener {
         return mView
     }
 
+    override fun onFabListChanged() {
+        updateList()
+    }
+
     fun updateList(){
+        Log.i(TAG,"updating song's list")
+        songs = ArrayList()
         getFabList()
         adapter = MyAdapter(songs,this)
         recycler.adapter = adapter
@@ -82,16 +107,17 @@ class FabFragment : Fragment(), CustomOnItemClickListener {
                 var mediaCursor = contentR.query(uri_content,trackProjection,selection,selectionArgs,null)
                 Log.i(TAG,"mediaCursorCreated")
                 if(mediaCursor != null){
-                    mediaCursor.moveToFirst()
+                    mediaCursor.moveToNext()
                     var title = mediaCursor.getString(mediaCursor.getColumnIndex(MediaStore.Audio.Media.TITLE))
                     var artist = mediaCursor.getString(mediaCursor.getColumnIndex(MediaStore.Audio.Media.ARTIST))
-                    var duration = mediaCursor.getInt(mediaCursor.getColumnIndex(MediaStore.Audio.Media.DURATION))
+                    var duration = mediaCursor.getInt(mediaCursor.getColumnIndex(MediaStore.Audio.Media.DURATION)) / 1000
                     var path = mediaCursor.getString(mediaCursor.getColumnIndex(MediaStore.Audio.Media.DATA))
                     var id = mediaCursor.getLong(mediaCursor.getColumnIndex(MediaStore.Audio.Media._ID))
                     songs.add(Song(artist,title,path,duration,id))
                 }
             }while (cursor.moveToNext())
         }
+
         Log.i(TAG,"number of songs: "+ songs.size)
     }
 
@@ -105,14 +131,4 @@ class FabFragment : Fragment(), CustomOnItemClickListener {
 
 
 
-    companion object {
-
-        @JvmStatic
-        fun newInstance(param1: String) =
-                FabFragment().apply {
-                    arguments = Bundle().apply {
-                        putString("PATH", param1)
-                    }
-                }
-    }
 }

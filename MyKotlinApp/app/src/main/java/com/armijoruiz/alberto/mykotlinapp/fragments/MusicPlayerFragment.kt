@@ -118,11 +118,13 @@ class MusicPlayerFragment : Fragment(), CustomMusicListener, CustomMusicPlayerCo
 
     override fun onSongAddedToFab(added: Boolean) {
         Log.i(TAG,"changing icon")
+        Log.i(TAG,"added to fab"+added.toString())
         if(added){
             starButton?.setImageResource(R.drawable.ic_full_star)
         }else{
             starButton?.setImageResource(R.drawable.ic_emtpy_star)
         }
+
     }
 
     // Función que crea los listener de los botones, seekBar, etc...

@@ -31,7 +31,6 @@ import com.armijoruiz.alberto.mykotlinapp.other.FINISH
 import com.armijoruiz.alberto.mykotlinapp.other.PLAYSONG
 import com.armijoruiz.alberto.mykotlinapp.services.PlayMusicService
 import com.sothree.slidinguppanel.SlidingUpPanelLayout
-
 import kotlinx.android.synthetic.main.main_tab_activity.*
 import kotlinx.android.synthetic.main.fragment_main.view.*
 
@@ -53,6 +52,7 @@ class MainActivity : FragmentActivity() {
         fun getFabsPlaylistId():Long = fab_id
 
         fun addToPlaylist(audioId:Int,context : Context){
+            Log.i("adding to playlist","adding song: "+audioId)
             var cr : ContentResolver = context.contentResolver
             var uri : Uri = MediaStore.Audio.Playlists.Members.getContentUri("external", fab_id)
             var cols = arrayOf("count(*)")
@@ -66,6 +66,7 @@ class MainActivity : FragmentActivity() {
         }
 
         fun removeFromPlaylist(audioId: Int, context: Context){
+            Log.i("removing from playlist","removing song: "+audioId)
             var cols = arrayOf("count(*)")
             var cr : ContentResolver = context.contentResolver
             var uri : Uri = MediaStore.Audio.Playlists.Members.getContentUri("external", fab_id)
