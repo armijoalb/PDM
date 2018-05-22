@@ -57,9 +57,11 @@
      <Compile Include="Assets\Chibi Mummy\Misc\Scripts\CharMovement.cs" />
      <Compile Include="Assets\enemy_manager.cs" />
      <Compile Include="Assets\follow_player.cs" />
+     <Compile Include="Assets\GameOverManager.cs" />
      <Compile Include="Assets\Health_controller.cs" />
      <Compile Include="Assets\health_view_controller.cs" />
      <Compile Include="Assets\player_controller.cs" />
+     <Compile Include="Assets\ScoreManager.cs" />
      <Compile Include="Assets\trigger_mummy.cs" />
      <Compile Include="Assets\Virtual Joystick Pack\Example\PlayerExample.cs" />
      <Compile Include="Assets\Virtual Joystick Pack\Scripts\Base\Joystick.cs" />
