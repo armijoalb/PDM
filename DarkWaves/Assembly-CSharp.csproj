@@ -51,7 +51,16 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+     <Compile Include="Assets\attack_controller.cs" />
+     <Compile Include="Assets\attack_trigger.cs" />
+     <Compile Include="Assets\Chibi Mummy\Misc\Scripts\buttonControl_script.cs" />
+     <Compile Include="Assets\Chibi Mummy\Misc\Scripts\CharMovement.cs" />
+     <Compile Include="Assets\enemy_manager.cs" />
+     <Compile Include="Assets\follow_player.cs" />
+     <Compile Include="Assets\Health_controller.cs" />
+     <Compile Include="Assets\health_view_controller.cs" />
      <Compile Include="Assets\player_controller.cs" />
+     <Compile Include="Assets\trigger_mummy.cs" />
      <Compile Include="Assets\Virtual Joystick Pack\Example\PlayerExample.cs" />
      <Compile Include="Assets\Virtual Joystick Pack\Scripts\Base\Joystick.cs" />
      <Compile Include="Assets\Virtual Joystick Pack\Scripts\Joysticks\FixedJoystick.cs" />
@@ -67,6 +76,7 @@
      <None Include="Assets\StreamingAssets\Vuforia\VuforiaMars_Object_OT.xml" />
      <None Include="Assets\Vuforia\Shaders\DepthMask.shader" />
      <None Include="Assets\StreamingAssets\Vuforia\VuforiaMars_Images.xml" />
+     <None Include="Assets\Chibi Mummy\readme.txt" />
      <None Include="Assets\Vuforia\Shaders\BrightTexture.shader" />
      <None Include="Assets\StreamingAssets\Vuforia\VuforiaMars_VuMark.xml" />
      <None Include="Assets\Vuforia\Shaders\DepthContour.shader" />

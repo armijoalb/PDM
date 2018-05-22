@@ -1,8 +1,15 @@
 ﻿<Properties StartupItem="Assembly-CSharp.csproj">
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="Unity.Instance.Unity Editor" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\player_controller.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\follow_player.cs">
     <Files>
-      <File FileName="Assets\player_controller.cs" Line="22" Column="43" />
+      <File FileName="Assets\player_controller.cs" Line="1" Column="1" />
+      <File FileName="Assets\attack_trigger.cs" Line="1" Column="1" />
+      <File FileName="Assets\attack_controller.cs" Line="1" Column="1" />
+      <File FileName="Assets\Health_controller.cs" Line="1" Column="1" />
+      <File FileName="Assets\trigger_mummy.cs" Line="1" Column="1" />
+      <File FileName="Assets\health_view_controller.cs" Line="1" Column="1" />
+      <File FileName="Assets\enemy_manager.cs" Line="9" Column="28" />
+      <File FileName="Assets\follow_player.cs" Line="14" Column="48" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

@@ -40,3 +40,4 @@ D:\UnityProyects\DarkWaves\Temp\bin\Debug\UnityEngine.SpatialTracking.xml
 D:\UnityProyects\DarkWaves\obj\Debug\Assembly-CSharp.csprojResolveAssemblyReference.cache
 D:\UnityProyects\DarkWaves\obj\Debug\Assembly-CSharp.dll
 D:\UnityProyects\DarkWaves\obj\Debug\Assembly-CSharp.pdb
+D:\UnityProyects\DarkWaves\Temp\bin\Debug\Assembly-CSharp-firstpass.pdb
