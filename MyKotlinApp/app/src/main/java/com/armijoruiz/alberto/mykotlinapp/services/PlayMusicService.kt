@@ -8,17 +8,21 @@ package com.armijoruiz.alberto.mykotlinapp.services
 
 
 import android.app.*
-import android.content.Context
-import android.content.Intent
+import android.content.*
 import android.media.AudioManager
 import android.media.MediaPlayer
+import android.media.session.MediaSessionManager
 import android.net.Uri
 import android.os.Build
 import android.os.Handler
 import android.os.IBinder
 import android.provider.MediaStore
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.NotificationManagerCompat
 import android.support.v4.content.ContextCompat
+import android.support.v4.media.app.NotificationCompat.MediaStyle
+import android.support.v4.media.session.MediaControllerCompat
+import android.support.v4.media.session.MediaSessionCompat
 import android.util.Log
 import com.armijoruiz.alberto.mykotlinapp.MainActivity
 import com.armijoruiz.alberto.mykotlinapp.fragments.MusicFragment
@@ -54,7 +58,11 @@ class PlayMusicService : Service() {
         private lateinit var uri_playlist : String
         private var default_uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI.toString()
         private var fab_list : ArrayList<String> = ArrayList()
-
+        private var mStarted = false
+        private lateinit var mediaSessions : MediaSessionCompat
+        private lateinit var receiver : NotificationControlsListener
+        private lateinit var mManager : MediaSessionManager
+        private lateinit var mMediaController : MediaControllerCompat
 
         fun isMediaPlaying() = mMediaPlayer?.isPlaying
         fun isOreoOrHigher() = Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
@@ -83,6 +91,20 @@ class PlayMusicService : Service() {
         mProgressBarHandler = Handler()
 
         notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        notificationManager.cancelAll()
+
+        val filter: IntentFilter = IntentFilter()
+        filter.addAction(NEXT)
+        filter.addAction(PLAYPAUSE)
+        filter.addAction(PREV)
+        filter.addAction(ADD_REM)
+
+        var mediaButtonReceiver : ComponentName = ComponentName(applicationContext,NotificationControlsListener::class.java)
+        mediaSessions = MediaSessionCompat(this,"MusicService")
+
+
+
+
 
     }
 
@@ -101,9 +123,12 @@ class PlayMusicService : Service() {
         mMediaPlayer = null
 
         mAudioManager = null
+        mStarted = false
 
         handleProgressBar(false)
         stopForeground(true);
+        notificationManager.cancel(NOTIFICATION_ID)
+
     }
 
     private fun getFabList(){
@@ -186,6 +211,7 @@ class PlayMusicService : Service() {
                 customMusicListener.onSongAddedToFab(true)
                 customFabListener.onFabListChanged()
                 getFabList()
+                setupNotification()
             }
             REM_FAB->{
                 Log.i("onStartCommand", "removing to fab")
@@ -195,6 +221,23 @@ class PlayMusicService : Service() {
                 customMusicListener.onSongAddedToFab(false)
                 customFabListener.onFabListChanged()
                 getFabList()
+                setupNotification()
+            }
+            ADD_REM->{
+                if(isInFabList(musicDataList!![currentPos!!].name)){
+                    MainActivity.removeFromPlaylist(
+                            MainActivity.getSongIdFromMediaStore(musicDataList!![currentPos!!].path,applicationContext).toInt(),
+                            applicationContext)
+                    customMusicListener.onSongAddedToFab(false)
+                    customFabListener.onFabListChanged()
+                }else{
+                    MainActivity.addToPlaylist(musicDataList!![currentPos!!].id.toInt(),applicationContext)
+                    customMusicListener.onSongAddedToFab(true)
+                    customFabListener.onFabListChanged()
+
+                }
+                getFabList()
+                setupNotification()
             }
             else-> Log.i("onStartCommand", "not reconised action")
         }
@@ -278,6 +321,7 @@ class PlayMusicService : Service() {
         val author = musicDataList!![currentPos!!].author
         val song_name = musicDataList!![currentPos!!].name
         val playPauseIcon = if(isMediaPlaying()!!) R.drawable.ic_pause else R.drawable.ic_play
+        val fabButton = if(isInFabList(song_name)) R.drawable.ic_full_star else R.drawable.ic_emtpy_star
 
 
         // Necesario para que se muestren notificaciones a partir de android oreo o superior.
@@ -294,11 +338,8 @@ class PlayMusicService : Service() {
         }
 
 
-
-        val notification = NotificationCompat.Builder(this, CHANNEL_ID)
-                .setStyle(android.support.v4.media.app.NotificationCompat.MediaStyle()
-                        .setShowActionsInCompactView(0,1,2)
-                )
+        Log.i(TAG, mediaSessions.sessionToken.toString())
+        val notificationBuilder = NotificationCompat.Builder(this, CHANNEL_ID)
                 .setSmallIcon(R.drawable.ic_notification)
                 .setContentTitle(song_name)
                 .setContentText(author)
@@ -312,18 +353,34 @@ class PlayMusicService : Service() {
                 .addAction(R.drawable.ic_prev,"PREVIOUS", getActionIntent(PREV) ) // 0
                 .addAction(playPauseIcon, "PLAYPAUSE", getActionIntent(PLAYPAUSE)) // 1
                 .addAction(R.drawable.ic_next, "NEXT", getActionIntent(NEXT)) // 2
-                .setColor(ContextCompat.getColor(applicationContext,R.color.colorAccent))
+                .addAction(fabButton, "ADD_REM", getActionIntent(ADD_REM))
+                .setStyle(MediaStyle()
+                    .setMediaSession(mediaSessions.sessionToken)
+                    .setShowActionsInCompactView(0,1,2))
+
 
         if(isOreoOrHigher()){
-            notification.setColorized(true)
+            notificationBuilder.setColorized(true)
         }
 
+        val notification = notificationBuilder.build();
 
 
         Log.i("setupNotification", "starting notification")
-        startForeground(NOTIFICATION_ID, notification.build())
 
 
+        if(!mStarted && isMediaPlaying()!!){
+            startForeground(NOTIFICATION_ID, notification)
+            notificationManager.notify(NOTIFICATION_ID,notification)
+            mStarted = true
+        }else{
+            if(!isMediaPlaying()!!) {
+                Log.i("setupNotification","media is not playing")
+                stopForeground(false)
+            }
+        }
+
+        notificationManager.notify(NOTIFICATION_ID,notification)
 
         Log.i("setupNofication", "started")
     }

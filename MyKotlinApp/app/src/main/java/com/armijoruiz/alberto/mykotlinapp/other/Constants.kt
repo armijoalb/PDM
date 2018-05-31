@@ -8,4 +8,5 @@ const val SET_PROGRESS:String = "com.armijoruiz.alberto.mykotlinapp.action.SET_P
 const val FINISH :String = "com.armijoruiz.alberto.mykotlinapp.action.FINISH"
 const val ADD_FAB : String = "com.armijoruiz.alberto.mykotlinapp.action.ADD_FAB"
 const val REM_FAB: String = "com.armijoruiz.alberto.mykotlinapp.action.REM_FAB"
+const val ADD_REM: String = "com.armijoruiz.alberto.mykotlinapp.action.ADD_REM"
 

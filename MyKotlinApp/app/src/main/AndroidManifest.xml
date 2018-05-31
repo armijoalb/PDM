@@ -34,10 +34,16 @@
                 <action android:name="com.armijoruiz.alberto.mykotlinapp.action.FINISH" />
                 <action android:name="com.armijoruiz.alberto.mykotlinapp.action.ADD_FAB" />
                 <action android:name="com.armijoruiz.alberto.mykotlinapp.action.REM_FAB" />
+                <action android:name="com.armijoruiz.alberto.mykotlinapp.action.ADD_REM" />
             </intent-filter>
         </service>
 
-        <receiver android:name=".receivers.NotificationControlsListener" />
+        <receiver android:name=".receivers.NotificationControlsListener" >
+
+        </receiver>
+
+
+
     </application>
 
 </manifest>
