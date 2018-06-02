@@ -41,3 +41,5 @@ D:\UnityProyects\DarkWaves\obj\Debug\Assembly-CSharp.csprojResolveAssemblyRefere
 D:\UnityProyects\DarkWaves\obj\Debug\Assembly-CSharp.dll
 D:\UnityProyects\DarkWaves\obj\Debug\Assembly-CSharp.pdb
 D:\UnityProyects\DarkWaves\Temp\bin\Debug\Assembly-CSharp-firstpass.pdb
+D:\UnityProyects\DarkWaves\Temp\bin\Debug\TextMeshPro-2017.3-Editor.dll
+D:\UnityProyects\DarkWaves\Temp\bin\Debug\TextMeshPro-2017.3-Runtime.dll

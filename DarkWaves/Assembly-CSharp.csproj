@@ -51,18 +51,53 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-     <Compile Include="Assets\attack_controller.cs" />
-     <Compile Include="Assets\attack_trigger.cs" />
      <Compile Include="Assets\Chibi Mummy\Misc\Scripts\buttonControl_script.cs" />
      <Compile Include="Assets\Chibi Mummy\Misc\Scripts\CharMovement.cs" />
-     <Compile Include="Assets\enemy_manager.cs" />
-     <Compile Include="Assets\follow_player.cs" />
-     <Compile Include="Assets\GameOverManager.cs" />
-     <Compile Include="Assets\Health_controller.cs" />
-     <Compile Include="Assets\health_view_controller.cs" />
-     <Compile Include="Assets\player_controller.cs" />
-     <Compile Include="Assets\ScoreManager.cs" />
-     <Compile Include="Assets\trigger_mummy.cs" />
+     <Compile Include="Assets\Scripts\attack_controller.cs" />
+     <Compile Include="Assets\Scripts\attack_trigger.cs" />
+     <Compile Include="Assets\Scripts\enemy_manager.cs" />
+     <Compile Include="Assets\Scripts\follow_player.cs" />
+     <Compile Include="Assets\Scripts\GameOverController.cs" />
+     <Compile Include="Assets\Scripts\Health_controller.cs" />
+     <Compile Include="Assets\Scripts\health_view_controller.cs" />
+     <Compile Include="Assets\Scripts\MainMenuController.cs" />
+     <Compile Include="Assets\Scripts\mummy_health.cs" />
+     <Compile Include="Assets\Scripts\player_controller.cs" />
+     <Compile Include="Assets\Scripts\ScoreManager.cs" />
+     <Compile Include="Assets\Scripts\trigger_mummy.cs" />
+     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\Benchmark01.cs" />
+     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\Benchmark01_UGUI.cs" />
+     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\Benchmark02.cs" />
+     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\Benchmark03.cs" />
+     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\Benchmark04.cs" />
+     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\CameraController.cs" />
+     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\ChatController.cs" />
+     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\EnvMapAnimator.cs" />
+     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\ObjectSpin.cs" />
+     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\ShaderPropAnimator.cs" />
+     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\SimpleScript.cs" />
+     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\SkewTextExample.cs" />
+     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TeleType.cs" />
+     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TextConsoleSimulator.cs" />
+     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TextMeshProFloatingText.cs" />
+     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TextMeshSpawner.cs" />
+     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TMP_DigitValidator.cs" />
+     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TMP_ExampleScript_01.cs" />
+     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TMP_FrameRateCounter.cs" />
+     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TMP_PhoneNumberValidator.cs" />
+     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TMP_TextEventCheck.cs" />
+     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TMP_TextEventHandler.cs" />
+     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TMP_TextInfoDebugTool.cs" />
+     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TMP_TextSelector_A.cs" />
+     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TMP_TextSelector_B.cs" />
+     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TMP_UiFrameRateCounter.cs" />
+     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TMPro_InstructionOverlay.cs" />
+     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\VertexColorCycler.cs" />
+     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\VertexJitter.cs" />
+     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\VertexShakeA.cs" />
+     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\VertexShakeB.cs" />
+     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\VertexZoom.cs" />
+     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\WarpTextExample.cs" />
      <Compile Include="Assets\Virtual Joystick Pack\Example\PlayerExample.cs" />
      <Compile Include="Assets\Virtual Joystick Pack\Scripts\Base\Joystick.cs" />
      <Compile Include="Assets\Virtual Joystick Pack\Scripts\Joysticks\FixedJoystick.cs" />
@@ -70,14 +105,35 @@
      <Compile Include="Assets\Virtual Joystick Pack\Scripts\Joysticks\VariableJoystick.cs" />
      <Compile Include="Assets\Vuforia\Scripts\DefaultInitializationErrorHandler.cs" />
      <Compile Include="Assets\Vuforia\Scripts\DefaultTrackableEventHandler.cs" />
+     <None Include="Assets\TextMesh Pro\Resources\LineBreaking Leading Characters.txt" />
      <None Include="Assets\Vuforia\Shaders\ColoredLines.shader" />
+     <None Include="Assets\TextMesh Pro\Resources\Shaders\TMP_Bitmap-Mobile.shader" />
      <None Include="Assets\StreamingAssets\Vuforia\VuforiaMars_ModelTarget.xml" />
      <None Include="Assets\Vuforia\Shaders\CameraDiffuse.shader" />
+     <None Include="Assets\TextMesh Pro\Examples &amp; Extras\Fonts\Anton OFL.txt" />
      <None Include="Assets\Vuforia\Shaders\VertexLitWithZ.shader" />
+     <None Include="Assets\TextMesh Pro\Resources\Shaders\TMPro_Surface.cginc" />
+     <None Include="Assets\TextMesh Pro\Resources\Shaders\TMP_SDF-Surface.shader" />
+     <None Include="Assets\TextMesh Pro\Resources\Shaders\TMP_SDF.shader" />
+     <None Include="Assets\TextMesh Pro\Resources\Shaders\TMP_SDF-Mobile Overlay.shader" />
+     <None Include="Assets\TextMesh Pro\Resources\Shaders\TMPro_Properties.cginc" />
      <None Include="Assets\Vuforia\Shaders\OutlineOpaque.shader" />
+     <None Include="Assets\TextMesh Pro\Resources\Shaders\TMP_SDF-Surface-Mobile.shader" />
+     <None Include="Assets\TextMesh Pro\Resources\Shaders\TMP_SDF Overlay.shader" />
      <None Include="Assets\StreamingAssets\Vuforia\VuforiaMars_Object_OT.xml" />
+     <None Include="Assets\TextMesh Pro\Resources\Shaders\TMPro.cginc" />
+     <None Include="Assets\TextMesh Pro\Examples &amp; Extras\Fonts\Oswald Bold - OFL.txt" />
+     <None Include="Assets\TextMesh Pro\Resources\Shaders\TMP_SDF-Mobile Masking.shader" />
      <None Include="Assets\Vuforia\Shaders\DepthMask.shader" />
+     <None Include="Assets\TextMesh Pro\Resources\Shaders\TMP_Bitmap.shader" />
+     <None Include="Assets\TextMesh Pro\Examples &amp; Extras\Fonts\NotoSans - License.txt" />
+     <None Include="Assets\TextMesh Pro\Resources\Shaders\TMP_Sprite.shader" />
+     <None Include="Assets\TextMesh Pro\Resources\Shaders\TMP_SDF-Mobile.shader" />
+     <None Include="Assets\TextMesh Pro\Sprites\EmojiOne Attribution.txt" />
      <None Include="Assets\StreamingAssets\Vuforia\VuforiaMars_Images.xml" />
+     <None Include="Assets\TextMesh Pro\Resources\LineBreaking Following Characters.txt" />
+     <None Include="Assets\TextMesh Pro\Examples &amp; Extras\Fonts\LiberationSans - OFL.txt" />
+     <None Include="Assets\TextMesh Pro\Examples &amp; Extras\Fonts\Bangers - OFL.txt" />
      <None Include="Assets\Chibi Mummy\readme.txt" />
      <None Include="Assets\Vuforia\Shaders\BrightTexture.shader" />
      <None Include="Assets\StreamingAssets\Vuforia\VuforiaMars_VuMark.xml" />
@@ -113,6 +169,12 @@
  </Reference>
  <Reference Include="UnityEngine.SpatialTracking">
  <HintPath>C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/UnitySpatialTracking/RuntimeEditor/UnityEngine.SpatialTracking.dll</HintPath>
+ </Reference>
+ <Reference Include="TextMeshPro-2017.3-Editor">
+ <HintPath>D:/UnityProyects/DarkWaves/Assets/TextMesh Pro/Plugins/Editor DLL/TextMeshPro-2017.3-Editor.dll</HintPath>
+ </Reference>
+ <Reference Include="TextMeshPro-2017.3-Runtime">
+ <HintPath>D:/UnityProyects/DarkWaves/Assets/TextMesh Pro/Plugins/Editor DLL/TextMeshPro-2017.3-Runtime.dll</HintPath>
  </Reference>
  <Reference Include="UnityEngine.Advertisements">
  <HintPath>C:/ProgramData/Unity/cache/packages/packages.unity.com/com.unity.ads@2.0.3/UnityEngine.Advertisements.dll</HintPath>

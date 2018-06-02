@@ -1,17 +1,13 @@
 ﻿<Properties StartupItem="Assembly-CSharp.csproj">
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="Unity.Instance.Unity Editor" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\GameOverManager.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\attack_trigger.cs">
     <Files>
-      <File FileName="Assets\player_controller.cs" Line="1" Column="1" />
-      <File FileName="Assets\attack_trigger.cs" Line="14" Column="56" />
-      <File FileName="Assets\attack_controller.cs" Line="1" Column="1" />
-      <File FileName="Assets\Health_controller.cs" Line="1" Column="1" />
-      <File FileName="Assets\trigger_mummy.cs" Line="1" Column="1" />
-      <File FileName="Assets\health_view_controller.cs" Line="1" Column="1" />
-      <File FileName="Assets\enemy_manager.cs" Line="1" Column="1" />
-      <File FileName="Assets\follow_player.cs" Line="1" Column="1" />
-      <File FileName="Assets\GameOverManager.cs" Line="7" Column="33" />
-      <File FileName="Assets\ScoreManager.cs" Line="16" Column="20" />
+      <File FileName="Assets\Scripts\trigger_mummy.cs" Line="8" Column="8" />
+      <File FileName="Assets\Scripts\GameOverController.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\attack_controller.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\attack_trigger.cs" Line="16" Column="35" />
+      <File FileName="Assets\Scripts\mummy_health.cs" Line="18" Column="35" />
+      <File FileName="Assets\Scripts\Health_controller.cs" Line="1" Column="1" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
