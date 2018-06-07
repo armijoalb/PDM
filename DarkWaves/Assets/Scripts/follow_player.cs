@@ -6,7 +6,7 @@ public class follow_player : MonoBehaviour {
 
 	private Transform player;
 	private Rigidbody rb;
-	private float mummy_speed = 0.85f;
+	public float mummy_speed = 0.85f;
 
 	// Use this for initialization
 	void Start () {

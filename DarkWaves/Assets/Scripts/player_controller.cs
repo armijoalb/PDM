@@ -28,6 +28,7 @@ public class player_controller : MonoBehaviour {
 		rb.velocity = movement*1.5f;
 
 		if(x != 0 && y != 0){
+			Debug.Log(x.ToString() + " : " + y.ToString());
 			transform.eulerAngles = new Vector3 (transform.eulerAngles.x,
 				Mathf.Atan2 (x, y) * Mathf.Rad2Deg,
 				transform.eulerAngles.z);

@@ -9,4 +9,7 @@
     <string name="cantidad">Cantidad</string>
     <string name="concepto">Concepto</string>
     <string name="descripcion">Descripción</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

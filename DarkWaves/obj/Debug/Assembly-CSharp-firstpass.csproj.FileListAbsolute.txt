@@ -42,3 +42,47 @@ D:\UnityProyects\DarkWaves\obj\Debug\Assembly-CSharp-firstpass.dll
 D:\UnityProyects\DarkWaves\obj\Debug\Assembly-CSharp-firstpass.pdb
 D:\UnityProyects\DarkWaves\Temp\bin\Debug\TextMeshPro-2017.3-Editor.dll
 D:\UnityProyects\DarkWaves\Temp\bin\Debug\TextMeshPro-2017.3-Runtime.dll
+C:\Users\Alberto Armijo Ruiz\Universidad\GitHub\PDM\DarkWaves\Temp\bin\Debug\Assembly-CSharp-firstpass.dll
+C:\Users\Alberto Armijo Ruiz\Universidad\GitHub\PDM\DarkWaves\Temp\bin\Debug\Assembly-CSharp-firstpass.pdb
+C:\Users\Alberto Armijo Ruiz\Universidad\GitHub\PDM\DarkWaves\Temp\bin\Debug\nunit.framework.dll
+C:\Users\Alberto Armijo Ruiz\Universidad\GitHub\PDM\DarkWaves\Temp\bin\Debug\TextMeshPro-2017.3-Editor.dll
+C:\Users\Alberto Armijo Ruiz\Universidad\GitHub\PDM\DarkWaves\Temp\bin\Debug\TextMeshPro-2017.3-Runtime.dll
+C:\Users\Alberto Armijo Ruiz\Universidad\GitHub\PDM\DarkWaves\Temp\bin\Debug\UnityEditor.dll
+C:\Users\Alberto Armijo Ruiz\Universidad\GitHub\PDM\DarkWaves\Temp\bin\Debug\UnityEngine.Advertisements.dll
+C:\Users\Alberto Armijo Ruiz\Universidad\GitHub\PDM\DarkWaves\Temp\bin\Debug\UnityEngine.Analytics.dll
+C:\Users\Alberto Armijo Ruiz\Universidad\GitHub\PDM\DarkWaves\Temp\bin\Debug\UnityEngine.dll
+C:\Users\Alberto Armijo Ruiz\Universidad\GitHub\PDM\DarkWaves\Temp\bin\Debug\UnityEngine.GoogleAudioSpatializer.dll
+C:\Users\Alberto Armijo Ruiz\Universidad\GitHub\PDM\DarkWaves\Temp\bin\Debug\UnityEngine.HoloLens.dll
+C:\Users\Alberto Armijo Ruiz\Universidad\GitHub\PDM\DarkWaves\Temp\bin\Debug\UnityEngine.Networking.dll
+C:\Users\Alberto Armijo Ruiz\Universidad\GitHub\PDM\DarkWaves\Temp\bin\Debug\UnityEngine.Purchasing.dll
+C:\Users\Alberto Armijo Ruiz\Universidad\GitHub\PDM\DarkWaves\Temp\bin\Debug\UnityEngine.SpatialTracking.dll
+C:\Users\Alberto Armijo Ruiz\Universidad\GitHub\PDM\DarkWaves\Temp\bin\Debug\UnityEngine.StandardEvents.dll
+C:\Users\Alberto Armijo Ruiz\Universidad\GitHub\PDM\DarkWaves\Temp\bin\Debug\UnityEngine.TestRunner.dll
+C:\Users\Alberto Armijo Ruiz\Universidad\GitHub\PDM\DarkWaves\Temp\bin\Debug\UnityEngine.Timeline.dll
+C:\Users\Alberto Armijo Ruiz\Universidad\GitHub\PDM\DarkWaves\Temp\bin\Debug\UnityEngine.UI.dll
+C:\Users\Alberto Armijo Ruiz\Universidad\GitHub\PDM\DarkWaves\Temp\bin\Debug\UnityEngine.UIAutomation.dll
+C:\Users\Alberto Armijo Ruiz\Universidad\GitHub\PDM\DarkWaves\Temp\bin\Debug\Vuforia.UnityExtensions.dll
+C:\Users\Alberto Armijo Ruiz\Universidad\GitHub\PDM\DarkWaves\Temp\bin\Debug\Unity.Cecil.dll
+C:\Users\Alberto Armijo Ruiz\Universidad\GitHub\PDM\DarkWaves\Temp\bin\Debug\Unity.SerializationLogic.dll
+C:\Users\Alberto Armijo Ruiz\Universidad\GitHub\PDM\DarkWaves\Temp\bin\Debug\Unity.DataContract.dll
+C:\Users\Alberto Armijo Ruiz\Universidad\GitHub\PDM\DarkWaves\Temp\bin\Debug\ExCSS.Unity.dll
+C:\Users\Alberto Armijo Ruiz\Universidad\GitHub\PDM\DarkWaves\Temp\bin\Debug\Unity.Legacy.NRefactory.dll
+C:\Users\Alberto Armijo Ruiz\Universidad\GitHub\PDM\DarkWaves\Temp\bin\Debug\Unity.UNetWeaver.dll
+C:\Users\Alberto Armijo Ruiz\Universidad\GitHub\PDM\DarkWaves\Temp\bin\Debug\Unity.CecilTools.dll
+C:\Users\Alberto Armijo Ruiz\Universidad\GitHub\PDM\DarkWaves\Temp\bin\Debug\Unity.Cecil.Pdb.dll
+C:\Users\Alberto Armijo Ruiz\Universidad\GitHub\PDM\DarkWaves\Temp\bin\Debug\Unity.Cecil.Mdb.dll
+C:\Users\Alberto Armijo Ruiz\Universidad\GitHub\PDM\DarkWaves\Temp\bin\Debug\UnityEngine.xml
+C:\Users\Alberto Armijo Ruiz\Universidad\GitHub\PDM\DarkWaves\Temp\bin\Debug\UnityEditor.xml
+C:\Users\Alberto Armijo Ruiz\Universidad\GitHub\PDM\DarkWaves\Temp\bin\Debug\Vuforia.UnityExtensions.xml
+C:\Users\Alberto Armijo Ruiz\Universidad\GitHub\PDM\DarkWaves\Temp\bin\Debug\UnityEngine.UI.xml
+C:\Users\Alberto Armijo Ruiz\Universidad\GitHub\PDM\DarkWaves\Temp\bin\Debug\UnityEngine.Networking.xml
+C:\Users\Alberto Armijo Ruiz\Universidad\GitHub\PDM\DarkWaves\Temp\bin\Debug\UnityEngine.TestRunner.xml
+C:\Users\Alberto Armijo Ruiz\Universidad\GitHub\PDM\DarkWaves\Temp\bin\Debug\nunit.framework.xml
+C:\Users\Alberto Armijo Ruiz\Universidad\GitHub\PDM\DarkWaves\Temp\bin\Debug\UnityEngine.Timeline.xml
+C:\Users\Alberto Armijo Ruiz\Universidad\GitHub\PDM\DarkWaves\Temp\bin\Debug\UnityEngine.UIAutomation.xml
+C:\Users\Alberto Armijo Ruiz\Universidad\GitHub\PDM\DarkWaves\Temp\bin\Debug\UnityEngine.GoogleAudioSpatializer.xml
+C:\Users\Alberto Armijo Ruiz\Universidad\GitHub\PDM\DarkWaves\Temp\bin\Debug\UnityEngine.HoloLens.xml
+C:\Users\Alberto Armijo Ruiz\Universidad\GitHub\PDM\DarkWaves\Temp\bin\Debug\UnityEngine.SpatialTracking.xml
+C:\Users\Alberto Armijo Ruiz\Universidad\GitHub\PDM\DarkWaves\obj\Debug\Assembly-CSharp-firstpass.csprojResolveAssemblyReference.cache
+C:\Users\Alberto Armijo Ruiz\Universidad\GitHub\PDM\DarkWaves\obj\Debug\Assembly-CSharp-firstpass.dll
+C:\Users\Alberto Armijo Ruiz\Universidad\GitHub\PDM\DarkWaves\obj\Debug\Assembly-CSharp-firstpass.pdb

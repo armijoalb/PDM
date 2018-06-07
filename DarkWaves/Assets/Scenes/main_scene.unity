@@ -396,6 +396,16 @@ Prefab:
       propertyPath: m_Center.z
       value: -1.3254201
       objectReference: {fileID: 0}
+    - target: {fileID: 54258214556170000, guid: 652f57d70622a794191f6034184082d4,
+        type: 2}
+      propertyPath: m_IsKinematic
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 54258214556170000, guid: 652f57d70622a794191f6034184082d4,
+        type: 2}
+      propertyPath: m_Constraints
+      value: 116
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 652f57d70622a794191f6034184082d4, type: 2}
   m_IsPrefabParent: 0
@@ -1415,10 +1425,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e0665a9dd5d33514a976a7e9d3cf73d4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  player_health: {fileID: 598618972}
-  restartDelay: 5
-  anim: {fileID: 0}
-  restartTimer: 0
 --- !u!1 &1309837761
 GameObject:
   m_ObjectHideFlags: 0
