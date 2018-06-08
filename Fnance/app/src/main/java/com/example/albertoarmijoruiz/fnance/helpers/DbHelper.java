@@ -6,10 +6,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
-
 import com.example.albertoarmijoruiz.fnance.models.ContainerElement;
-
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 public class DbHelper extends SQLiteOpenHelper {
@@ -119,6 +116,7 @@ public class DbHelper extends SQLiteOpenHelper {
         values.put(ContainerElement.COLUMN_CONCEPTO,elem.getConcepto());
         values.put(ContainerElement.COLUMN_CANTIDAD,elem.getCantidad());
 
+        Log.i(TAG,"updating element");
         // Devuelve la nueva
         return db.update(ContainerElement.TABLE_NAME, values, ContainerElement.COLUMN_ID + " = ?",
                 new String[]{String.valueOf(elem.getId())});

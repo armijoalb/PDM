@@ -9,38 +9,54 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.albertoarmijoruiz.fnance.R;
+import com.example.albertoarmijoruiz.fnance.adapters.ContainerAdaper;
 import com.example.albertoarmijoruiz.fnance.helpers.DbHelper;
+import com.example.albertoarmijoruiz.fnance.models.ContainerElement;
 
-public class NewItemActivity extends AppCompatActivity {
+public class EditActivity extends AppCompatActivity {
 
-    private EditText cant_edit, concept_edit, description;
-    private Button add_new;
-    private DbHelper mHelper;
-    private String TAG = NewItemActivity.class.getSimpleName();
+    private EditText cantidad, concepto, descripcion;
+    private Button updateButton;
     private String[] listConceptos = new String[] {"Supermecados","Ocio","Ropa y complementos","Pagos mensuales","Otros"};
+    private DbHelper helper;
+    private final String TAG = EditActivity.class.getSimpleName();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_item);
+        Bundle extras = getIntent().getExtras();
 
-        mHelper = new DbHelper(this);
+        helper = new DbHelper(this);
 
-        cant_edit = findViewById(R.id.cantidad_param);
-        concept_edit = findViewById(R.id.concepto_param);
+        cantidad = (EditText)findViewById(R.id.cantidad_param);
+        concepto = (EditText)findViewById(R.id.concepto_param);
+        descripcion = (EditText)findViewById(R.id.desc_param);
+        updateButton = (Button)findViewById(R.id.add_new);
 
-        concept_edit.setOnClickListener(new View.OnClickListener() {
+        final int id = extras.getInt(ContainerAdaper.ID);
+        String can = extras.getString(ContainerAdaper.CANTIDAD);
+        final String conc = extras.getString(ContainerAdaper.CONCETO);
+        String desc = extras.getString(ContainerAdaper.DESC);
+        final String time = extras.getString(ContainerAdaper.TIME);
+
+        cantidad.setText(can, TextView.BufferType.EDITABLE);
+        concepto.setText(conc,TextView.BufferType.EDITABLE);
+        descripcion.setText(desc,TextView.BufferType.EDITABLE);
+
+        concepto.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                AlertDialog.Builder mBuilder = new AlertDialog.Builder(NewItemActivity.this);
+                AlertDialog.Builder mBuilder = new AlertDialog.Builder(EditActivity.this);
                 mBuilder.setTitle("Elija un tipo");
                 mBuilder.setSingleChoiceItems(listConceptos, -1, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        concept_edit.setText(listConceptos[which]);
+                        concepto.setText(listConceptos[which]);
                         dialog.dismiss();
                     }
                 });
@@ -55,16 +71,16 @@ public class NewItemActivity extends AppCompatActivity {
             }
         });
 
-        concept_edit.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+        concepto.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
                 if(hasFocus){
-                    AlertDialog.Builder mBuilder = new AlertDialog.Builder(NewItemActivity.this);
+                    AlertDialog.Builder mBuilder = new AlertDialog.Builder(EditActivity.this);
                     mBuilder.setTitle("Elija un tipo");
                     mBuilder.setSingleChoiceItems(listConceptos, -1, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            concept_edit.setText(listConceptos[which]);
+                            concepto.setText(listConceptos[which]);
                             dialog.dismiss();
                         }
                     });
@@ -80,27 +96,26 @@ public class NewItemActivity extends AppCompatActivity {
             }
         });
 
-        description = findViewById(R.id.desc_param);
-        add_new = findViewById(R.id.add_new);
-
-        add_new.setOnClickListener(new View.OnClickListener() {
+        updateButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String can = cant_edit.getText().toString();
-                String con = concept_edit.getText().toString();
-                String desc = description.getText().toString();
 
-                if(!can.isEmpty() && !con.isEmpty()){
-                    // Añadir elemento a la base de datos.
-                    mHelper.insertElement(can,con,desc);
-                    Log.i(TAG,"Número de elementos"+mHelper.getNumberOfElements()+"");
+                if(!concepto.getText().toString().isEmpty() && !cantidad.getText().toString().isEmpty()){
+                    ContainerElement element = new ContainerElement(concepto.getText().toString(),
+                            cantidad.getText().toString(),
+                            id,
+                            time,
+                            descripcion.getText().toString());
+                    helper.updateElement(element);
                     Intent intent = new Intent(getBaseContext(),MainActivity.class);
                     startActivity(intent);
                 }else{
-                    Toast.makeText(getBaseContext(),"Rellene los campos cantidad y concepto",Toast.LENGTH_LONG)
-                            .show();
+                    Toast.makeText(getBaseContext(),"Rellene al menos los campos de cantidad y concepto",
+                            Toast.LENGTH_LONG).show();
                 }
             }
         });
+
+
     }
 }
