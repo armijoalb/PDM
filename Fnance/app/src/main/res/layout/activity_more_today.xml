@@ -35,7 +35,7 @@
     <TextView
         android:id="@+id/conc_desc"
         android:layout_width="wrap_content"
-        android:layout_height="47dp"
+        android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="16dp"
@@ -49,12 +49,12 @@
 
     <TextView
         android:id="@+id/real_concept"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginEnd="16dp"
         android:layout_marginTop="16dp"
         android:text="TextView"
-        android:textAppearance="@style/TextAppearance.AppCompat.Display1"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/real_cantidad" />
 
@@ -79,7 +79,7 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="16dp"
         android:text="TextView"
-        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.025"
